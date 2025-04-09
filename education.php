@@ -1,6 +1,7 @@
 <?php
-// Include header
+// Include header and functions
 include_once 'includes/header.php';
+include_once 'includes/functions.php';
 ?>
 
 <!-- Page Header -->
