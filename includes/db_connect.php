@@ -9,6 +9,13 @@ $conn = null;
 // Establish database connection
 try {
     $conn = new PDO("mysql:host=$host;dbname=$db_name", $username, $password);
+    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch(PDOException $e) {
+    error_log("Connection failed: " . $e->getMessage());
+    // Continue even if database connection fails
+}
+try {
+    $conn = new PDO("mysql:host=$host;dbname=$db_name", $username, $password);
     // Set the PDO error mode to exception
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     // Set default fetch mode to associative array

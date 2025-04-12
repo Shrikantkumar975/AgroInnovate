@@ -87,6 +87,7 @@ require_once 'includes/functions.php';
     <?php include 'includes/footer.php'; ?>
     <script src="/js/main.js"></script>
     <script src="/js/language.js"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
     <script>
         // Initialize Feather icons
         if (typeof feather !== 'undefined') {
