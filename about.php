@@ -127,7 +127,7 @@ include_once 'includes/header.php';
                 <div class="card h-100">
                     <div class="card-body text-center">
                         <div class="mb-4">
-                            <i data-feather="users" style="width: 48px; height: 48px; color: var(--primary-color);"></i>
+                            <i data-feather="accessibility" style="width: 48px; height: 48px; color: var(--primary-color);"></i>
                         </div>
                         <h4 class="card-title" data-en="Inclusivity" data-hi="समावेशिता">
                             <?php echo ($_SESSION['language'] == 'en') ? 'Inclusivity' : 'समावेशिता'; ?>
