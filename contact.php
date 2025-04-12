@@ -1,9 +1,6 @@
 
 <?php
-session_start();
-if (!isset($_SESSION['language'])) {
-    $_SESSION['language'] = 'en';
-}
+require_once 'includes/session.php';
 require_once 'includes/functions.php';
 ?>
 <!DOCTYPE html>

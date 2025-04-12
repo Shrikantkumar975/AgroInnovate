@@ -1,11 +1,5 @@
 <?php
-// Start the session
-session_start();
-
-// Set default language if not set
-if (!isset($_SESSION['language'])) {
-    $_SESSION['language'] = 'en';
-}
+require_once __DIR__ . '/session.php';
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo $_SESSION['language']; ?>">
