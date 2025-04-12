@@ -1,9 +1,9 @@
 <?php
 // Database connection configuration
-$host = 'localhost';
-$db_name = 'agroinnovate';
-$username = 'root';
-$password = '';
+$host = getenv('DB_HOST') ?: 'localhost';
+$db_name = getenv('DB_NAME') ?: 'agroinnovate';
+$username = getenv('DB_USER') ?: 'root';
+$password = getenv('DB_PASS') ?: '';
 $conn = null;
 
 // Establish database connection
