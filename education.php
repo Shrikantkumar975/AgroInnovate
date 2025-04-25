@@ -5,7 +5,7 @@ include_once 'includes/functions.php';
 ?>
 
 <!-- Page Header -->
-<section class="py-5 bg-primary text-white">
+<section class="py-5 bg-success text-white">
     <div class="container">
         <h1 data-en="Educational Resources" data-hi="शैक्षिक संसाधन">
             <?php echo ($_SESSION['language'] == 'en') ? 'Educational Resources' : 'शैक्षिक संसाधन'; ?>
@@ -71,7 +71,7 @@ include_once 'includes/functions.php';
                 <div class="col-md-4 mb-4">
                     <div class="resource-card">
                         <div class="resource-image">
-                            <img src="/assets/<?php echo $resource['image']; ?>" alt="<?php echo $resource['title']; ?>" class="img-fluid">
+                            <img src="assets/<?php echo $resource['image']; ?>" alt="<?php echo $resource['title']; ?>" class="img-fluid">
                         </div>
                         <div class="resource-content">
                             <h3 class="resource-title"><?php echo $resource['title']; ?></h3>
@@ -445,7 +445,7 @@ include_once 'includes/functions.php';
                 $resource = $resourceDetails[$resourceId];
                 ?>
                 <div class="card">
-                    <div class="card-header bg-primary text-white">
+                    <div class="card-header bg-success text-white">
                         <h2 class="mb-0"><?php echo $resource['title']; ?></h2>
                     </div>
                     <div class="card-body">
@@ -539,7 +539,7 @@ include_once 'includes/functions.php';
                 <div class="card h-100">
                     <div class="card-body">
                         <h3 class="card-title h5">
-                            <i data-feather="smartphone" class="me-2 text-primary"></i>
+                            <i data-feather="smartphone" class="me-2 text-success"></i>
                             <span data-en="mKisan Portal" data-hi="एम-किसान पोर्टल">
                                 <?php echo ($_SESSION['language'] == 'en') ? 'mKisan Portal' : 'एम-किसान पोर्टल'; ?>
                             </span>
@@ -547,7 +547,7 @@ include_once 'includes/functions.php';
                         <p class="card-text" data-en="Receive SMS advisories on weather, market prices, and farming practices directly on your mobile phone through this government service." data-hi="इस सरकारी सेवा के माध्यम से अपने मोबाइल फोन पर सीधे मौसम, बाजार मूल्य और कृषि प्रथाओं पर एसएमएस सलाह प्राप्त करें।">
                             <?php echo ($_SESSION['language'] == 'en') ? 'Receive SMS advisories on weather, market prices, and farming practices directly on your mobile phone through this government service.' : 'इस सरकारी सेवा के माध्यम से अपने मोबाइल फोन पर सीधे मौसम, बाजार मूल्य और कृषि प्रथाओं पर एसएमएस सलाह प्राप्त करें।'; ?>
                         </p>
-                        <a href="https://mkisan.gov.in/" target="_blank" class="btn btn-outline-primary" data-en="Register Now" data-hi="अभी पंजीकरण करें">
+                        <a href="https://mkisan.gov.in/" target="_blank" class="btn btn-outline-success" data-en="Register Now" data-hi="अभी पंजीकरण करें">
                             <?php echo ($_SESSION['language'] == 'en') ? 'Register Now' : 'अभी पंजीकरण करें'; ?>
                         </a>
                     </div>
@@ -579,7 +579,7 @@ include_once 'includes/functions.php';
                                         <p data-en="Learn about soil testing, organic matter management, and balanced fertilizer application for maintaining healthy soil." data-hi="स्वस्थ मिट्टी बनाए रखने के लिए मिट्टी परीक्षण, जैविक पदार्थ प्रबंधन और संतुलित उर्वरक अनुप्रयोग के बारे में जानें।">
                                             <?php echo ($_SESSION['language'] == 'en') ? 'Learn about soil testing, organic matter management, and balanced fertilizer application for maintaining healthy soil.' : 'स्वस्थ मिट्टी बनाए रखने के लिए मिट्टी परीक्षण, जैविक पदार्थ प्रबंधन और संतुलित उर्वरक अनुप्रयोग के बारे में जानें।'; ?>
                                         </p>
-                                        <a href="https://www.youtube.com/watch?v=7IuDMN37UxE" target="_blank" class="btn btn-outline-primary" data-en="Watch Video" data-hi="वीडियो देखें">
+                                        <a href="https://youtu.be/ijofn-u9Ctw?si=O51HIg2GoHTrYV7a" target="_blank" class="btn btn-outline-primary" data-en="Watch Video" data-hi="वीडियो देखें">
                                             <?php echo ($_SESSION['language'] == 'en') ? 'Watch Video' : 'वीडियो देखें'; ?>
                                         </a>
                                     </div>
@@ -594,7 +594,7 @@ include_once 'includes/functions.php';
                                         <p data-en="Discover how to control pests using a combination of biological controls, cultural practices, and judicious use of pesticides." data-hi="जैविक नियंत्रण, सांस्कृतिक प्रथाओं और कीटनाशकों के विवेकपूर्ण उपयोग के संयोजन का उपयोग करके कीटों को नियंत्रित करने के तरीके जानें।">
                                             <?php echo ($_SESSION['language'] == 'en') ? 'Discover how to control pests using a combination of biological controls, cultural practices, and judicious use of pesticides.' : 'जैविक नियंत्रण, सांस्कृतिक प्रथाओं और कीटनाशकों के विवेकपूर्ण उपयोग के संयोजन का उपयोग करके कीटों को नियंत्रित करने के तरीके जानें।'; ?>
                                         </p>
-                                        <a href="https://www.youtube.com/watch?v=SgHaYCHAMHg" target="_blank" class="btn btn-outline-primary" data-en="Watch Video" data-hi="वीडियो देखें">
+                                        <a href="https://youtu.be/9eBL3l3k9XY" target="_blank" class="btn btn-outline-primary" data-en="Watch Video" data-hi="वीडियो देखें">
                                             <?php echo ($_SESSION['language'] == 'en') ? 'Watch Video' : 'वीडियो देखें'; ?>
                                         </a>
                                     </div>
@@ -609,7 +609,7 @@ include_once 'includes/functions.php';
                                         <p data-en="Learn efficient irrigation techniques, rainwater harvesting, and water conservation methods for sustainable farming." data-hi="टिकाऊ खेती के लिए कुशल सिंचाई तकनीकों, वर्षा जल संचयन और जल संरक्षण के तरीकों के बारे में जानें।">
                                             <?php echo ($_SESSION['language'] == 'en') ? 'Learn efficient irrigation techniques, rainwater harvesting, and water conservation methods for sustainable farming.' : 'टिकाऊ खेती के लिए कुशल सिंचाई तकनीकों, वर्षा जल संचयन और जल संरक्षण के तरीकों के बारे में जानें।'; ?>
                                         </p>
-                                        <a href="https://www.youtube.com/watch?v=LFDZk0hJ9UM" target="_blank" class="btn btn-outline-primary" data-en="Watch Video" data-hi="वीडियो देखें">
+                                        <a href="https://youtu.be/5QZ8GtIq2X4" target="_blank" class="btn btn-outline-primary" data-en="Watch Video" data-hi="वीडियो देखें">
                                             <?php echo ($_SESSION['language'] == 'en') ? 'Watch Video' : 'वीडियो देखें'; ?>
                                         </a>
                                     </div>
@@ -624,7 +624,7 @@ include_once 'includes/functions.php';
                                         <p data-en="Explore simple processing techniques to increase the value of your farm products and improve your income." data-hi="अपने कृषि उत्पादों के मूल्य को बढ़ाने और अपनी आय में सुधार करने के लिए सरल प्रसंस्करण तकनीकों का पता लगाएं।">
                                             <?php echo ($_SESSION['language'] == 'en') ? 'Explore simple processing techniques to increase the value of your farm products and improve your income.' : 'अपने कृषि उत्पादों के मूल्य को बढ़ाने और अपनी आय में सुधार करने के लिए सरल प्रसंस्करण तकनीकों का पता लगाएं।'; ?>
                                         </p>
-                                        <a href="https://www.youtube.com/watch?v=vcWDnxJHu48" target="_blank" class="btn btn-outline-primary" data-en="Watch Video" data-hi="वीडियो देखें">
+                                        <a href="https://youtu.be/3QZ8GtIq2X4" target="_blank" class="btn btn-outline-primary" data-en="Watch Video" data-hi="वीडियो देखें">
                                             <?php echo ($_SESSION['language'] == 'en') ? 'Watch Video' : 'वीडियो देखें'; ?>
                                         </a>
                                     </div>
@@ -632,7 +632,7 @@ include_once 'includes/functions.php';
                             </div>
                         </div>
                         <div class="text-center mt-3">
-                            <a href="https://www.youtube.com/c/icarofficial" target="_blank" class="btn btn-primary" data-en="More Educational Videos" data-hi="अधिक शैक्षिक वीडियो">
+                            <a href="https://www.youtube.com/c/ICARIndianCouncilofAgriculturalResearch" target="_blank" class="btn btn-primary" data-en="More Educational Videos" data-hi="अधिक शैक्षिक वीडियो">
                                 <?php echo ($_SESSION['language'] == 'en') ? 'More Educational Videos' : 'अधिक शैक्षिक वीडियो'; ?>
                             </a>
                         </div>

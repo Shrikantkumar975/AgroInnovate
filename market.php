@@ -1,10 +1,23 @@
 <?php
+session_start();
+require_once 'includes/session.php';
+require_once 'includes/functions.php';
+require_once 'includes/db_connect.php';
+
+// Redirect if not logged in with message
+if (!isset($_SESSION['user_id'])) {
+    $_SESSION['message'] = "Please login to access market prices and trends.";
+    $_SESSION['message_type'] = "warning";
+    header('Location: login.php');
+    exit;
+}
+
 // Include header
 include_once 'includes/header.php';
 ?>
 
 <!-- Page Header -->
-<section class="py-5 bg-primary text-white">
+<section class="py-5 bg-success text-white">
     <div class="container">
         <h1 data-en="Market Prices" data-hi="बाजार मूल्य">
             <?php echo ($_SESSION['language'] == 'en') ? 'Market Prices' : 'बाजार मूल्य'; ?>
@@ -133,8 +146,11 @@ include_once 'includes/header.php';
             <div class="col-md-6 mb-4">
                 <div class="card h-100">
                     <div class="card-body">
-                        <h3 class="card-title h5" data-en="Best Time to Sell" data-hi="बेचने का सबसे अच्छा समय">
-                            <?php echo ($_SESSION['language'] == 'en') ? 'Best Time to Sell' : 'बेचने का सबसे अच्छा समय'; ?>
+                        <h3 class="card-title h5">
+                            <i data-feather="trending-up" class="me-2 text-success"></i>
+                            <span data-en="Best Time to Sell" data-hi="बेचने का सबसे अच्छा समय">
+                                <?php echo ($_SESSION['language'] == 'en') ? 'Best Time to Sell' : 'बेचने का सबसे अच्छा समय'; ?>
+                            </span>
                         </h3>
                         <p data-en="Knowing when to sell your crops can significantly impact your profits. Our historical data shows that prices for most grain crops typically peak in the months just before new harvests come to market. For perishable crops like vegetables and fruits, prices are highest during off-season periods." data-hi="अपनी फसलों को कब बेचना है, यह जानने से आपके मुनाफे पर महत्वपूर्ण प्रभाव पड़ सकता है। हमारे ऐतिहासिक डेटा से पता चलता है कि अधिकांश अनाज फसलों के लिए कीमतें आमतौर पर नई फसलों के बाजार में आने से ठीक पहले के महीनों में चरम पर होती हैं। सब्जियों और फलों जैसी नाशवान फसलों के लिए, ऑफ-सीजन अवधि के दौरान कीमतें सबसे अधिक होती हैं।">
                             <?php echo ($_SESSION['language'] == 'en') ? 'Knowing when to sell your crops can significantly impact your profits. Our historical data shows that prices for most grain crops typically peak in the months just before new harvests come to market. For perishable crops like vegetables and fruits, prices are highest during off-season periods.' : 'अपनी फसलों को कब बेचना है, यह जानने से आपके मुनाफे पर महत्वपूर्ण प्रभाव पड़ सकता है। हमारे ऐतिहासिक डेटा से पता चलता है कि अधिकांश अनाज फसलों के लिए कीमतें आमतौर पर नई फसलों के बाजार में आने से ठीक पहले के महीनों में चरम पर होती हैं। सब्जियों और फलों जैसी नाशवान फसलों के लिए, ऑफ-सीजन अवधि के दौरान कीमतें सबसे अधिक होती हैं।'; ?>

@@ -1,17 +1,55 @@
 <?php
+session_start();
+require_once 'includes/session.php';
+require_once 'includes/functions.php';
+require_once 'includes/db_connect.php';
+
+// Redirect if not logged in with message
+if (!isset($_SESSION['user_id'])) {
+    $_SESSION['message'] = "Please login to access the weather information.";
+    $_SESSION['message_type'] = "warning";
+    header('Location: login.php');
+    exit;
+}
+
 // Include header
-include_once 'includes/header.php';
+require_once 'includes/header.php';
 ?>
 
-<!-- Page Header -->
-<section class="py-5 bg-primary text-white">
-    <div class="container">
-        <h1 data-en="Weather Forecasts" data-hi="मौसम पूर्वानुमान">
-            <?php echo ($_SESSION['language'] == 'en') ? 'Weather Forecasts' : 'मौसम पूर्वानुमान'; ?>
-        </h1>
-        <p class="lead" data-en="Real-time weather data to help you plan your farming activities" data-hi="आपकी कृषि गतिविधियों की योजना बनाने में मदद के लिए वास्तविक समय के मौसम डेटा">
-            <?php echo ($_SESSION['language'] == 'en') ? 'Real-time weather data to help you plan your farming activities' : 'आपकी कृषि गतिविधियों की योजना बनाने में मदद के लिए वास्तविक समय के मौसम डेटा'; ?>
-        </p>
+<style>
+.weather-section {
+    position: relative;
+    padding: 60px 0;
+    color: white;
+    background-color: #1B8A4C;
+}
+
+.weather-content {
+    position: relative;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.weather-title {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.weather-subtitle {
+    font-size: 1.2rem;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+    opacity: 0.9;
+}
+
+</style>
+
+<section class="weather-section">
+    <!-- Content -->
+    <div class="weather-content">
+        <h1 class="weather-title">Weather Forecasts</h1>
+        <p class="weather-subtitle">Real-time weather data to help you plan your farming activities</p>
     </div>
 </section>
 
@@ -75,7 +113,7 @@ include_once 'includes/header.php';
             </div>
             <div class="col-lg-4">
                 <div class="card">
-                    <div class="card-header bg-primary text-white">
+                    <div class="card-header bg-success text-white">
                         <h5 class="mb-0" data-en="Weather Impact on Farming" data-hi="कृषि पर मौसम का प्रभाव">
                             <?php echo ($_SESSION['language'] == 'en') ? 'Weather Impact on Farming' : 'कृषि पर मौसम का प्रभाव'; ?>
                         </h5>
@@ -191,7 +229,7 @@ include_once 'includes/header.php';
                 <div class="card h-100">
                     <div class="card-body">
                         <h3 class="card-title h5">
-                            <i data-feather="alert-triangle" class="me-2 text-primary"></i>
+                            <i data-feather="alert-triangle" class="me-2 text-success"></i>
                             <span data-en="Severe Weather Alerts" data-hi="गंभीर मौसम अलर्ट">
                                 <?php echo ($_SESSION['language'] == 'en') ? 'Severe Weather Alerts' : 'गंभीर मौसम अलर्ट'; ?>
                             </span>
@@ -199,7 +237,7 @@ include_once 'includes/header.php';
                         <p class="card-text" data-en="Receive timely notifications about potentially damaging weather events to protect your crops and livestock." data-hi="अपनी फसलों और पशुधन की रक्षा के लिए संभावित रूप से नुकसान पहुंचाने वाली मौसमी घटनाओं के बारे में समय पर सूचनाएं प्राप्त करें।">
                             <?php echo ($_SESSION['language'] == 'en') ? 'Receive timely notifications about potentially damaging weather events to protect your crops and livestock.' : 'अपनी फसलों और पशुधन की रक्षा के लिए संभावित रूप से नुकसान पहुंचाने वाली मौसमी घटनाओं के बारे में समय पर सूचनाएं प्राप्त करें।'; ?>
                         </p>
-                        <a href="#" class="btn btn-outline-primary" data-en="Coming Soon" data-hi="जल्द आ रहा है">
+                        <a href="#" class="btn btn-outline-success" data-en="Coming Soon" data-hi="जल्द आ रहा है">
                             <?php echo ($_SESSION['language'] == 'en') ? 'Coming Soon' : 'जल्द आ रहा है'; ?>
                         </a>
                     </div>
@@ -279,5 +317,5 @@ include_once 'includes/header.php';
 
 <?php
 // Include footer
-include_once 'includes/footer.php';
+require_once 'includes/footer.php';
 ?>

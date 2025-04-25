@@ -1,0 +1,14 @@
+{
+    "name": "agroinnovate/website",
+    "description": "AgroInnovate Website",
+    "type": "project",
+    "require": {
+        "phpmailer/phpmailer": "^6.8"
+    },
+    "authors": [
+        {
+            "name": "Sangam Mehta",
+            "email": "mehtasangam77@gmail.com"
+        }
+    ]
+}

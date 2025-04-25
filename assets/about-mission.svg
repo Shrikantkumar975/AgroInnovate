@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="400" height="300" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+    <!-- Background -->
+    <rect x="0" y="0" width="400" height="300" fill="#f8f9fa"/>
+    
+    <!-- Farmer with Technology -->
+    <circle cx="200" cy="100" r="40" fill="#4CAF50"/>
+    <path d="M200 150 L200 220" stroke="#4CAF50" stroke-width="8"/>
+    <path d="M160 180 L200 220 L240 180" stroke="#4CAF50" stroke-width="8"/>
+    
+    <!-- Plant Growth -->
+    <path d="M100 200 Q130 160 160 200" stroke="#81C784" stroke-width="4" fill="none"/>
+    <path d="M120 220 L140 150 L160 220" stroke="#81C784" stroke-width="4" fill="none"/>
+    
+    <!-- Technology Elements -->
+    <rect x="240" y="180" width="60" height="40" rx="5" fill="#2196F3"/>
+    <circle cx="270" cy="200" r="8" fill="white"/>
+    
+    <!-- Connection Lines -->
+    <path d="M200 100 Q270 140 270 180" stroke="#90CAF9" stroke-width="3" fill="none"/>
+</svg> 

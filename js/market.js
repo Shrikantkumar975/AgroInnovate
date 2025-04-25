@@ -354,7 +354,7 @@ function addPriceAnalysis(crop, data) {
     
     let analysisHtml = `
         <div class="card mt-4">
-            <div class="card-header bg-primary text-white">
+            <div class="card-header bg-success text-white">
                 <h5 class="mb-0">Market Analysis: ${crop}</h5>
             </div>
             <div class="card-body">
@@ -364,7 +364,7 @@ function addPriceAnalysis(crop, data) {
                         <ul class="list-group list-group-flush">
                             <li class="list-group-item d-flex justify-content-between align-items-center">
                                 Current Price
-                                <span class="badge bg-primary rounded-pill">₹${currentPrice.toLocaleString('en-IN')}/${getCurrentCropUnit(crop)}</span>
+                                <span class="badge bg-success rounded-pill">₹${currentPrice.toLocaleString('en-IN')}/${getCurrentCropUnit(crop)}</span>
                             </li>
                             <li class="list-group-item d-flex justify-content-between align-items-center">
                                 Monthly Change

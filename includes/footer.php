@@ -50,18 +50,18 @@
                         <?php echo ($_SESSION['language'] == 'en') ? 'Connect With Us' : 'हमसे जुड़ें'; ?>
                     </h5>
                     <div class="social-icons">
-                        <a href="#" aria-label="Facebook"><i data-feather="facebook"></i></a>
-                        <a href="#" aria-label="Twitter"><i data-feather="twitter"></i></a>
-                        <a href="#" aria-label="Instagram"><i data-feather="instagram"></i></a>
-                        <a href="#" aria-label="YouTube"><i data-feather="youtube"></i></a>
+                        <a href="https://www.facebook.com" target="_blank" aria-label="Facebook"><i data-feather="facebook"></i></a>
+                        <a href="https://twitter.com" target="_blank" aria-label="Twitter"><i data-feather="twitter"></i></a>
+                        <a href="https://www.instagram.com" target="_blank" aria-label="Instagram"><i data-feather="instagram"></i></a>
+                        <a href="https://www.youtube.com" target="_blank" aria-label="YouTube"><i data-feather="youtube"></i></a>
                     </div>
                 </div>
             </div>
             <hr>
             <div class="row">
                 <div class="col-md-6">
-                    <p class="copyright" data-en="&copy; 2023 AgroInnovate. All rights reserved." data-hi="&copy; 2023 एग्रोइनोवेट. सर्वाधिकार सुरक्षित।">
-                        <?php echo ($_SESSION['language'] == 'en') ? '&copy; 2023 AgroInnovate. All rights reserved.' : '&copy; 2023 एग्रोइनोवेट. सर्वाधिकार सुरक्षित।'; ?>
+                    <p class="copyright" data-en="&copy; 2025 AgroInnovate. All rights reserved." data-hi="&copy; 2025 एग्रोइनोवेट. सर्वाधिकार सुरक्षित।">
+                        <?php echo ($_SESSION['language'] == 'en') ? '&copy; 2025 AgroInnovate. All rights reserved.' : '&copy; 2025 एग्रोइनोवेट. सर्वाधिकार सुरक्षित।'; ?>
                     </p>
                 </div>
                 <div class="col-md-6 text-md-end">

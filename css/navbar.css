@@ -1,0 +1,455 @@
+/* Modern Navbar Styles for AgroInnovate */
+
+.navbar {
+    padding: 0.75rem 0;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.navbar-brand-wrapper {
+    min-width: 200px;
+    margin-right: 2rem;
+}
+
+.navbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0;
+    margin-right: 3rem !important;
+}
+
+.navbar-logo {
+    height: 40px;
+    width: auto;
+}
+
+.brand-text {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #4CAF50;
+    margin: 0;
+    white-space: nowrap;
+}
+
+.navbar-toggler {
+    border: none;
+    padding: 0;
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+.navbar-toggler-icon {
+    width: 24px;
+    height: 24px;
+    background-image: none !important;
+    position: relative;
+}
+
+.navbar-toggler-icon:before,
+.navbar-toggler-icon:after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    background-color: var(--primary-color);
+    left: 0;
+    transition: all 0.3s ease;
+}
+
+.navbar-toggler-icon:before {
+    top: 8px;
+}
+
+.navbar-toggler-icon:after {
+    top: 16px;
+}
+
+.navbar-toggler:not(.collapsed) .navbar-toggler-icon:before {
+    transform: rotate(45deg);
+    top: 12px;
+}
+
+.navbar-toggler:not(.collapsed) .navbar-toggler-icon:after {
+    transform: rotate(-45deg);
+    top: 12px;
+}
+
+.navbar-collapse {
+    flex-grow: 0;
+}
+
+.navbar-nav {
+    gap: 1.5rem;
+    margin-left: auto;
+}
+
+.nav-item {
+    position: relative;
+}
+
+.nav-link {
+    color: #2c3e50;
+    font-weight: 500;
+    padding: 0.5rem;
+    transition: color 0.2s ease;
+    white-space: nowrap;
+}
+
+.nav-link:hover,
+.nav-link:focus {
+    color: #4CAF50;
+}
+
+.nav-link.active {
+    color: #4CAF50;
+}
+
+.nav-link.active:after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 20px;
+    height: 3px;
+    background-color: var(--primary-color);
+    border-radius: 3px;
+}
+
+/* User dropdown styling */
+.welcome-user {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.welcome-user i {
+    width: 18px;
+    height: 18px;
+}
+
+.welcome-user span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 150px;
+}
+
+.welcome-text {
+    display: flex;
+    align-items: center;
+    font-weight: 500;
+    padding: 5px 10px;
+    border-radius: 20px;
+    background-color: rgba(40, 167, 69, 0.1);
+    color: var(--primary-color);
+    transition: all 0.3s ease;
+}
+
+.welcome-text:hover {
+    background-color: rgba(40, 167, 69, 0.2);
+}
+
+/* Dropdown styles */
+.dropdown-toggle {
+    cursor: pointer;
+}
+
+.dropdown-toggle::after {
+    display: inline-block;
+    margin-left: 0.5em;
+    vertical-align: 0.15em;
+}
+
+.dropdown-menu {
+    margin-top: 0.5rem !important;
+    padding: 0.5rem 0;
+    border: none;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    border-radius: 8px;
+    min-width: 200px;
+}
+
+.dropdown-item {
+    padding: 0.625rem 1rem;
+    display: flex;
+    align-items: center;
+    color: #2c3e50;
+    transition: all 0.2s ease;
+}
+
+.dropdown-item i {
+    width: 16px;
+    height: 16px;
+    margin-right: 0.75rem;
+    color: #6c757d;
+}
+
+.dropdown-item:hover,
+.dropdown-item:focus {
+    background-color: #f8f9fa;
+    color: #4CAF50;
+}
+
+.dropdown-item:hover i,
+.dropdown-item:focus i {
+    color: #4CAF50;
+}
+
+.dropdown-item.text-danger {
+    color: #dc3545;
+}
+
+.dropdown-item.text-danger:hover,
+.dropdown-item.text-danger:focus {
+    background-color: #fff5f5;
+    color: #dc3545;
+}
+
+.dropdown-item.text-danger:hover i,
+.dropdown-item.text-danger:focus i {
+    color: #dc3545;
+}
+
+.dropdown-divider {
+    margin: 0.5rem 0;
+    border-color: #e9ecef;
+}
+
+/* Language selector styling */
+#language-selector {
+    min-width: 100px;
+}
+
+.form-select-sm {
+    padding: 0.25rem 2rem 0.25rem 0.75rem;
+    font-size: 0.875rem;
+    border-radius: 4px;
+    border-color: #e0e0e0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 991.98px) {
+    .navbar-brand-wrapper {
+        min-width: auto;
+        margin-right: 0;
+    }
+
+    .navbar-nav {
+        gap: 0;
+        padding: 1rem 0;
+    }
+    
+    .nav-item {
+        width: 100%;
+        margin: 0;
+    }
+    
+    .nav-link {
+        padding: 0.75rem 1rem;
+    }
+
+    .dropdown-menu {
+        margin-top: 0 !important;
+        box-shadow: none;
+        border: 1px solid #e9ecef;
+        width: 100%;
+    }
+    
+    .auth-button {
+        display: block;
+        width: 100%;
+        text-align: center;
+        margin: 0.5rem 0;
+    }
+    
+    #language-selector {
+        width: 100%;
+        margin-top: 0.5rem;
+    }
+    
+    .form-select-sm {
+        width: 100%;
+    }
+
+    .dropdown-item {
+        padding: 0.75rem 1rem;
+    }
+}
+
+/* Animation for navbar on scroll */
+.navbar-scrolled {
+    padding: 8px 0;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+}
+
+/* Auth buttons */
+.auth-button {
+    padding: 0.5rem 1.25rem;
+    border: 1.5px solid #4CAF50;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.auth-button:hover {
+    background-color: #4CAF50;
+    color: white !important;
+}
+
+.nav-item.dropdown .nav-link.dropdown-toggle {
+    background: none;
+    border: none;
+    padding: 0.5rem;
+    color: #2c3e50;
+    font-weight: 500;
+}
+
+.nav-item.dropdown .nav-link.dropdown-toggle:hover,
+.nav-item.dropdown .nav-link.dropdown-toggle:focus {
+    color: #4CAF50;
+}
+
+.nav-item.dropdown .nav-link.dropdown-toggle::after {
+    margin-left: 0.5em;
+    vertical-align: middle;
+}
+
+@media (max-width: 991.98px) {
+    .dropdown-menu {
+        margin-top: 0;
+        box-shadow: none;
+        border: 1px solid #e9ecef;
+        width: 100%;
+    }
+    
+    .dropdown-item {
+        padding: 0.75rem 1rem;
+    }
+    
+    .nav-item.dropdown .nav-link.dropdown-toggle {
+        width: 100%;
+        text-align: left;
+    }
+}
+
+/* Auth button styles */
+.auth-buttons .btn-group {
+    display: flex;
+    gap: 1px;
+}
+
+.auth-buttons .btn {
+    padding: 8px 16px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    border: none;
+}
+
+.auth-buttons .btn:first-child {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.auth-buttons .btn:last-child {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.auth-buttons .btn:hover {
+    transform: translateY(-1px);
+    opacity: 0.9;
+}
+
+/* Responsive styles */
+@media (max-width: 991.98px) {
+    .auth-buttons .btn-group {
+        width: 100%;
+    }
+    
+    .auth-buttons .btn {
+        flex: 1;
+    }
+}
+
+/* Floating Language Selector */
+.language-selector-floating {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+}
+
+.language-selector-floating .btn {
+    width: 45px;
+    height: 45px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.language-selector-floating .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.language-selector-floating .bi-globe2 {
+    font-size: 1.5rem;
+    color: #4CAF50;
+}
+
+.language-selector-floating .dropdown-menu {
+    min-width: 160px;
+    padding: 0.5rem 0;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    border: none;
+    border-radius: 8px;
+}
+
+.language-selector-floating .dropdown-item {
+    padding: 0.625rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #2c3e50;
+    transition: all 0.2s ease;
+}
+
+.language-selector-floating .dropdown-item:hover {
+    background-color: #f8f9fa;
+    color: #4CAF50;
+}
+
+.language-selector-floating .dropdown-item.active {
+    background-color: #e8f5e9;
+    color: #4CAF50;
+}
+
+.flag-icon {
+    width: 20px;
+    height: 15px;
+    object-fit: cover;
+    border-radius: 2px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .language-selector-floating {
+        bottom: 15px;
+        right: 15px;
+    }
+
+    .language-selector-floating .btn {
+        width: 40px;
+        height: 40px;
+    }
+
+    .language-selector-floating .bi-globe2 {
+        font-size: 1.25rem;
+    }
+} 

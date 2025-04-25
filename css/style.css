@@ -1,0 +1,53 @@
+/* Password Strength Indicator */
+.password-strength {
+    height: 5px;
+    background-color: #f0f0f0;
+    border-radius: 3px;
+    margin: 10px 0;
+}
+
+.password-strength-bar {
+    height: 100%;
+    width: 0;
+    border-radius: 3px;
+    transition: width 0.3s ease-in-out, background-color 0.3s ease-in-out;
+}
+
+.password-strength-bar.very-weak {
+    background-color: #ff4444;
+    width: 20%;
+}
+
+.password-strength-bar.weak {
+    background-color: #ffbb33;
+    width: 40%;
+}
+
+.password-strength-bar.medium {
+    background-color: #ffeb3b;
+    width: 60%;
+}
+
+.password-strength-bar.strong {
+    background-color: #00C851;
+    width: 80%;
+}
+
+.password-strength-bar.very-strong {
+    background-color: #007E33;
+    width: 100%;
+}
+
+/* Form Feedback */
+.feedback-text {
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+
+.text-success {
+    color: #28a745;
+}
+
+.text-danger {
+    color: #dc3545;
+} 

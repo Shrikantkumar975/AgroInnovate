@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+    <!-- Background Circle -->
+    <circle cx="100" cy="100" r="98" fill="#e8f5e9"/>
+    
+    <!-- Face -->
+    <circle cx="100" cy="85" r="45" fill="#ffb74d"/>
+    
+    <!-- Hair -->
+    <path d="M55 85c0-25 20-45 45-45s45 20 45 45c0-35-20-50-45-50s-45 15-45 50z" fill="#3e2723"/>
+    
+    <!-- Eyes -->
+    <circle cx="85" cy="80" r="5" fill="#3e2723"/>
+    <circle cx="115" cy="80" r="5" fill="#3e2723"/>
+    
+    <!-- Smile -->
+    <path d="M85 95c5 10 25 10 30 0" fill="none" stroke="#3e2723" stroke-width="3" stroke-linecap="round"/>
+    
+    <!-- Shirt -->
+    <path d="M60 140v30h80v-30c0-20-18-40-40-40s-40 20-40 40z" fill="#28a745"/>
+    
+    <!-- Laptop -->
+    <rect x="75" y="150" width="50" height="30" fill="#424242"/>
+    <rect x="75" y="145" width="50" height="5" fill="#616161"/>
+</svg> 

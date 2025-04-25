@@ -1,7 +1,65 @@
-
 <?php
 require_once 'includes/session.php';
 require_once 'includes/functions.php';
+
+// Initialize variables
+$successMessage = '';
+$errorMessage = '';
+
+// Process form submission
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Get form data
+    $name = sanitizeInput($_POST['name']);
+    $email = sanitizeInput($_POST['email']);
+    $subject = sanitizeInput($_POST['subject'] ?? 'Contact Form Submission');
+    $message = sanitizeInput($_POST['message']);
+    
+    // Validate inputs
+    if (empty($name) || empty($email) || empty($message)) {
+        $errorMessage = ($_SESSION['language'] == 'en') ? 'All fields are required.' : 'सभी फ़ील्ड आवश्यक हैं।';
+    } elseif (!isValidEmail($email)) {
+        $errorMessage = ($_SESSION['language'] == 'en') ? 'Please enter a valid email address.' : 'कृपया एक वैध ईमेल पता दर्ज करें।';
+    } else {
+        // Save submission to database
+        $formData = [
+            'name' => $name,
+            'email' => $email,
+            'subject' => $subject,
+            'message' => $message,
+            'created_at' => date('Y-m-d H:i:s')
+        ];
+        
+        $saved = saveContactSubmission($formData);
+        
+        if ($saved) {
+            // Send email notification to admin
+            $adminEmail = 'akashjasrotia6a@gmail.com'; // Admin email address
+            $emailSubject = "New Contact Form Submission: $subject";
+            $emailMessage = "New contact form submission received:\n\n";
+            $emailMessage .= "Name: $name\n";
+            $emailMessage .= "Email: $email\n";
+            $emailMessage .= "Subject: $subject\n\n";
+            $emailMessage .= "Message:\n$message\n\n";
+            $emailMessage .= "Sent on: " . date('Y-m-d H:i:s');
+            
+            // Use the new sendEmail function
+            $emailSent = sendEmail($adminEmail, $emailSubject, $emailMessage, $email);
+            
+            if ($emailSent) {
+                $successMessage = ($_SESSION['language'] == 'en') ? 'Thank you for your message. We will get back to you soon!' : 'आपके संदेश के लिए धन्यवाद। हम जल्द ही आपसे संपर्क करेंगे!';
+            } else {
+                $errorMessage = ($_SESSION['language'] == 'en') ? 
+                    'There was an issue sending your message. Please try again later or contact us directly at ' . $adminEmail . '.' : 
+                    'आपका संदेश भेजने में समस्या हुई। कृपया बाद में पुन: प्रयास करें या सीधे ' . $adminEmail . ' पर संपर्क करें।';
+                
+                // Log the error for debugging
+                error_log("Failed to send contact form email. Last error: " . error_get_last()['message']);
+            }
+        } else {
+            $errorMessage = ($_SESSION['language'] == 'en') ? 'There was an error saving your message. Please try again later.' : 'आपका संदेश सहेजने में एक त्रुटि हुई। कृपया बाद में पुन: प्रयास करें।';
+        }
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo $_SESSION['language']; ?>">
@@ -31,7 +89,7 @@ require_once 'includes/functions.php';
                                 <i data-feather="mail"></i>
                                 <div class="contact-text">
                                     <h4>Email</h4>
-                                    <p>contact@agroinnovate.com</p>
+                                    <p>akashjasrotia6a@gmail.com</p>
                                 </div>
                             </div>
                             
@@ -41,13 +99,25 @@ require_once 'includes/functions.php';
                                     <h4 data-en="Phone" data-hi="फ़ोन">
                                         <?php echo ($_SESSION['language'] == 'en') ? 'Phone' : 'फ़ोन'; ?>
                                     </h4>
-                                    <p>+91 1234567890</p>
+                                    <p>+91 7087792964</p>
                                 </div>
                             </div>
                         </div>
                     </div>
                     
                     <div class="col-md-6">
+                        <?php if ($successMessage): ?>
+                            <div class="alert alert-success" role="alert">
+                                <?php echo $successMessage; ?>
+                            </div>
+                        <?php endif; ?>
+                        
+                        <?php if ($errorMessage): ?>
+                            <div class="alert alert-danger" role="alert">
+                                <?php echo $errorMessage; ?>
+                            </div>
+                        <?php endif; ?>
+                        
                         <form id="contact-form" class="contact-form" method="post" action="">
                             <h3 data-en="Send us a Message" data-hi="हमें संदेश भेजें">
                                 <?php echo ($_SESSION['language'] == 'en') ? 'Send us a Message' : 'हमें संदेश भेजें'; ?>
@@ -65,6 +135,13 @@ require_once 'includes/functions.php';
                                     <?php echo ($_SESSION['language'] == 'en') ? 'Email Address' : 'ईमेल पता'; ?>
                                 </label>
                                 <input type="email" class="form-control" id="email" name="email" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="subject" data-en="Subject" data-hi="विषय">
+                                    <?php echo ($_SESSION['language'] == 'en') ? 'Subject' : 'विषय'; ?>
+                                </label>
+                                <input type="text" class="form-control" id="subject" name="subject">
                             </div>
                             
                             <div class="form-group">

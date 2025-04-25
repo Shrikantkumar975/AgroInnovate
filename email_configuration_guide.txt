@@ -1,0 +1,47 @@
+AgroInnovate Email Configuration Guide
+=====================================
+
+When you need to update email credentials in the future, you'll need to modify two files:
+
+1. File: includes/functions.php
+   Location: Line ~696 in the sendEmail() function
+   What to change:
+   - $mail->Username = 'your-new-email@gmail.com'
+   - $mail->Password = 'your-new-app-password'
+
+2. File: contact.php
+   Location: Line ~34 in the form processing section
+   What to change:
+   - $adminEmail = 'your-new-email@gmail.com'
+   
+   Also update the displayed email in the contact information section (around line ~90):
+   - <p>your-new-email@gmail.com</p>
+
+Steps to Generate a New Gmail App Password:
+-----------------------------------------
+1. Go to your Google Account settings (https://myaccount.google.com)
+2. Click on "Security" in the left navigation
+3. Under "2-Step Verification", click on "App passwords"
+4. Select "Mail" as the app and your device
+5. Click "Generate"
+6. Copy the 16-character password (it will look like: xxxx xxxx xxxx xxxx)
+7. Use this password in the configuration above
+
+Important Notes:
+--------------
+- Never share your App Password with anyone
+- If you suspect your password is compromised, delete it from Google Account settings and generate a new one
+- Keep 2-Step Verification enabled on your Google Account
+- Make sure to use the exact same email address in both files
+- The App Password is 16 characters with spaces (format: xxxx xxxx xxxx xxxx)
+
+Current Configuration:
+--------------------
+Email: shrikumar975@gmail.com
+Last updated: 2024-04-24
+
+For security reasons, if you need to disable the current email setup:
+1. Go to your Google Account
+2. Security → App Passwords
+3. Delete the App Password for this application
+4. Generate a new one when needed 

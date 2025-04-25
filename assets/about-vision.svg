@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="400" height="300" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+    <!-- Background -->
+    <rect x="0" y="0" width="400" height="300" fill="#f8f9fa"/>
+    
+    <!-- Sun -->
+    <circle cx="200" cy="150" r="60" fill="#FFC107"/>
+    <circle cx="200" cy="150" r="45" fill="#FFD54F"/>
+    
+    <!-- Fields -->
+    <path d="M40 200 Q200 160 360 200 L360 280 L40 280 Z" fill="#81C784"/>
+    <path d="M80 220 Q200 190 320 220 L320 260 L80 260 Z" fill="#4CAF50"/>
+    
+    <!-- Plants -->
+    <path d="M140 180 Q160 150 180 180" stroke="#2E7D32" stroke-width="4" fill="none"/>
+    <path d="M220 180 Q240 150 260 180" stroke="#2E7D32" stroke-width="4" fill="none"/>
+    
+    <!-- Technology Elements -->
+    <rect x="170" y="100" width="60" height="40" rx="5" fill="#2196F3" opacity="0.8"/>
+    <circle cx="200" cy="120" r="8" fill="white"/>
+</svg> 

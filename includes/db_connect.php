@@ -1,31 +1,28 @@
 <?php
-// Database connection configuration
-$host = getenv('DB_HOST') ?: 'localhost';
-$db_name = getenv('DB_NAME') ?: 'agroinnovate';
-$username = getenv('DB_USER') ?: 'root';
-$password = getenv('DB_PASS') ?: '';
-$conn = null;
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
-// Establish database connection
-try {
-    $conn = new PDO("mysql:host=$host;dbname=$db_name", $username, $password);
-    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch(PDOException $e) {
-    error_log("Connection failed: " . $e->getMessage());
-    // Continue even if database connection fails
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "agroinnovate";
+
+// Create connection
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+// Check connection
+if ($conn->connect_error) {
+    error_log("Connection failed: " . $conn->connect_error);
+    die("Connection failed: " . $conn->connect_error);
 }
-try {
-    $conn = new PDO("mysql:host=$host;dbname=$db_name", $username, $password);
-    // Set the PDO error mode to exception
-    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    // Set default fetch mode to associative array
-    $conn->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-    // Set charset to UTF-8
-    $conn->exec("SET NAMES 'utf8'");
-} catch(PDOException $e) {
-    // If we can't connect to the database, continue but log the error
-    error_log("Database Connection Error: " . $e->getMessage());
+
+// Set the character set to utf8mb4
+if (!$conn->set_charset("utf8mb4")) {
+    error_log("Error loading character set utf8mb4: " . $conn->error);
 }
+
+// Enable error reporting for mysqli
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
 // Function to safely execute SQL queries
 function executeQuery($sql, $params = []) {
@@ -39,26 +36,26 @@ function executeQuery($sql, $params = []) {
         $stmt = $conn->prepare($sql);
         $stmt->execute($params);
         return $stmt;
-    } catch(PDOException $e) {
+    } catch(mysqli_sql_exception $e) {
         error_log("Database Query Error: " . $e->getMessage());
         return false;
     }
 }
 
 // Function to get a single row
-function fetchOne($sql, $params = []) {
+function dbFetchOne($sql, $params = []) {
     $stmt = executeQuery($sql, $params);
     return $stmt ? $stmt->fetch() : false;
 }
 
 // Function to get multiple rows
-function fetchAll($sql, $params = []) {
+function dbFetchAll($sql, $params = []) {
     $stmt = executeQuery($sql, $params);
     return $stmt ? $stmt->fetchAll() : [];
 }
 
 // Function to insert data
-function insertData($table, $data) {
+function dbInsertData($table, $data) {
     global $conn;
     
     if (!$conn) {
@@ -74,15 +71,15 @@ function insertData($table, $data) {
         $stmt = $conn->prepare($sql);
         $stmt->execute(array_values($data));
         
-        return $conn->lastInsertId();
-    } catch(PDOException $e) {
+        return $conn->insert_id;
+    } catch(mysqli_sql_exception $e) {
         error_log("Database Insert Error: " . $e->getMessage());
         return false;
     }
 }
 
 // Function to update data
-function updateData($table, $data, $where, $whereParams = []) {
+function dbUpdateData($table, $data, $where, $whereParams = []) {
     global $conn;
     
     if (!$conn) {
@@ -105,15 +102,15 @@ function updateData($table, $data, $where, $whereParams = []) {
         $stmt = $conn->prepare($sql);
         $stmt->execute(array_merge($params, $whereParams));
         
-        return $stmt->rowCount();
-    } catch(PDOException $e) {
+        return $stmt->affected_rows;
+    } catch(mysqli_sql_exception $e) {
         error_log("Database Update Error: " . $e->getMessage());
         return false;
     }
 }
 
 // Function to delete data
-function deleteData($table, $where, $params = []) {
+function dbDeleteData($table, $where, $params = []) {
     global $conn;
     
     if (!$conn) {
@@ -126,8 +123,8 @@ function deleteData($table, $where, $params = []) {
         $stmt = $conn->prepare($sql);
         $stmt->execute($params);
         
-        return $stmt->rowCount();
-    } catch(PDOException $e) {
+        return $stmt->affected_rows;
+    } catch(mysqli_sql_exception $e) {
         error_log("Database Delete Error: " . $e->getMessage());
         return false;
     }

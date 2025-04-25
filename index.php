@@ -1,6 +1,18 @@
 <?php
-// Include header
+// Include required files
 include_once 'includes/header.php';
+include_once 'includes/functions.php';
+
+// Display success message if set
+if (isset($_SESSION['success_message'])) {
+    echo '<div class="container mt-3">';
+    echo '<div class="alert alert-success alert-dismissible fade show" role="alert">';
+    echo $_SESSION['success_message'];
+    echo '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>';
+    echo '</div>';
+    echo '</div>';
+    unset($_SESSION['success_message']);
+}
 ?>
 
 <!-- Hero Section -->
@@ -225,7 +237,7 @@ include_once 'includes/header.php';
 </section>
 
 <!-- Community Call-to-Action -->
-<section class="py-5 bg-primary text-white">
+<section class="py-5 bg-success text-white">
     <div class="container">
         <div class="row align-items-center">
             <div class="col-md-8">

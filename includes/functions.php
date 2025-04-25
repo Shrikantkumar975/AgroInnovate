@@ -1,6 +1,9 @@
 <?php
+// Include configuration
+require_once __DIR__ . '/config.php';
+
 // Include database connection
-require_once 'db_connect.php';
+require_once __DIR__ . '/db.php';
 
 /**
  * Sanitize user input to prevent XSS attacks
@@ -19,7 +22,7 @@ function sanitizeInput($input) {
  * @return bool Whether the email is valid
  */
 function isValidEmail($email) {
-    return filter_var($email, FILTER_VALIDATE_EMAIL) !== false;
+    return filter_var($email, FILTER_VALIDATE_EMAIL);
 }
 
 /**
@@ -54,19 +57,38 @@ function translate($englishText, $hindiText) {
 function getWeatherData($location) {
     $apiKey = getenv('OPENWEATHER_API_KEY');
     
+    // Log API key status
+    error_log("Weather API Key status: " . ($apiKey ? "Present" : "Missing"));
+    
     // Check if we have a valid API key
     if ($apiKey) {
         // Build API URL
         $url = "https://api.openweathermap.org/data/2.5/weather?q=" . urlencode($location) . ",in&units=metric&appid=" . $apiKey;
+        error_log("Attempting to fetch weather data from: " . $url);
         
-        // Make API request
-        $response = @file_get_contents($url);
+        // Make API request with error handling
+        $context = stream_context_create([
+            'http' => [
+                'ignore_errors' => true
+            ]
+        ]);
+        
+        $response = @file_get_contents($url, false, $context);
         
         if ($response !== false) {
-            return json_decode($response, true);
+            $data = json_decode($response, true);
+            if (isset($data['cod']) && $data['cod'] === 200) {
+                error_log("Successfully fetched weather data for: " . $location);
+                return $data;
+            } else {
+                error_log("API Error: " . ($data['message'] ?? 'Unknown error'));
+            }
+        } else {
+            error_log("Failed to fetch weather data. HTTP response: " . $http_response_header[0] ?? 'No response');
         }
     }
     
+    error_log("Falling back to demo weather data for: " . $location);
     // If API request fails or no API key, return demo data
     return getWeatherDemoData($location);
 }
@@ -167,19 +189,38 @@ function getWeatherDemoData($location) {
 function getWeatherForecast($location) {
     $apiKey = getenv('OPENWEATHER_API_KEY');
     
+    // Log API key status
+    error_log("Weather Forecast API Key status: " . ($apiKey ? "Present" : "Missing"));
+    
     // Check if we have a valid API key
     if ($apiKey) {
         // Build API URL
         $url = "https://api.openweathermap.org/data/2.5/forecast?q=" . urlencode($location) . ",in&units=metric&appid=" . $apiKey;
+        error_log("Attempting to fetch forecast data from: " . $url);
         
-        // Make API request
-        $response = @file_get_contents($url);
+        // Make API request with error handling
+        $context = stream_context_create([
+            'http' => [
+                'ignore_errors' => true
+            ]
+        ]);
+        
+        $response = @file_get_contents($url, false, $context);
         
         if ($response !== false) {
-            return json_decode($response, true);
+            $data = json_decode($response, true);
+            if (isset($data['cod']) && $data['cod'] === "200") {
+                error_log("Successfully fetched forecast data for: " . $location);
+                return $data;
+            } else {
+                error_log("API Error: " . ($data['message'] ?? 'Unknown error'));
+            }
+        } else {
+            error_log("Failed to fetch forecast data. HTTP response: " . $http_response_header[0] ?? 'No response');
         }
     }
     
+    error_log("Falling back to demo forecast data for: " . $location);
     // If API request fails or no API key, return demo data
     return getForecastDemoData($location);
 }
@@ -456,23 +497,55 @@ function getEducationalResources($category = null) {
  * @return bool Whether the save was successful
  */
 function saveContactSubmission($formData) {
-    global $conn;
+    global $pdo;
     
-    if (!$conn) {
-        // If no database connection, still return true to avoid errors
-        return true;
+    try {
+        // First, ensure the table exists
+        $pdo->exec("CREATE TABLE IF NOT EXISTS `contact_submissions` (
+            `id` int(11) NOT NULL AUTO_INCREMENT,
+            `name` varchar(100) NOT NULL,
+            `email` varchar(100) NOT NULL,
+            `subject` varchar(255) NOT NULL,
+            `message` text NOT NULL,
+            `created_at` datetime NOT NULL,
+            `is_read` tinyint(1) NOT NULL DEFAULT '0',
+            PRIMARY KEY (`id`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
+
+        // Prepare the insert statement
+        $sql = "INSERT INTO contact_submissions (name, email, subject, message, created_at) VALUES (:name, :email, :subject, :message, :created_at)";
+        $stmt = $pdo->prepare($sql);
+        
+        // Execute with the form data
+        $result = $stmt->execute([
+            ':name' => $formData['name'],
+            ':email' => $formData['email'],
+            ':subject' => $formData['subject'],
+            ':message' => $formData['message'],
+            ':created_at' => $formData['created_at']
+        ]);
+        
+        return $result;
+        
+    } catch (PDOException $e) {
+        // Log the error
+        error_log("Error saving contact submission: " . $e->getMessage());
+        return false;
     }
-    
-    return insertData('contact_submissions', $formData);
 }
 
 /**
  * Save community post to database
  * 
- * @param array $postData The post data to save
+ * @param string $name The name of the poster
+ * @param string $title The post title
+ * @param string $content The post content
+ * @param string $location The location of the poster
+ * @param string $imagePath The path to the uploaded image
+ * @param int|null $userId The user ID if logged in
  * @return bool Whether the save was successful
  */
-function saveCommunityPost($postData) {
+function saveCommunityPost($name, $title, $content, $location, $imagePath = null, $userId = null) {
     global $conn;
     
     if (!$conn) {
@@ -480,7 +553,17 @@ function saveCommunityPost($postData) {
         return true;
     }
     
-    return insertData('community_posts', $postData);
+    $postData = [
+        'name' => $name,
+        'title' => $title,
+        'content' => $content,
+        'location' => $location,
+        'image_path' => $imagePath,
+        'user_id' => $userId,
+        'created_at' => date('Y-m-d H:i:s')
+    ];
+    
+    return dbInsertData('community_posts', $postData);
 }
 
 /**
@@ -490,41 +573,40 @@ function saveCommunityPost($postData) {
  * @param int $offset Offset for pagination
  * @return array Community posts
  */
-function getCommunityPosts($limit = 10, $offset = 0) {
-    global $conn;
+function getCommunityPosts($limit = null, $offset = 0) {
+    global $pdo;
     
-    if (!$conn) {
-        // Return dummy data if no database connection
-        return [
-            [
-                'id' => 1,
-                'name' => 'Rajesh Kumar',
-                'location' => 'Punjab',
-                'title' => 'Success with Organic Farming',
-                'content' => 'I switched to organic farming methods last year and have seen a 20% increase in crop quality. Happy to share my experience with anyone interested.',
-                'created_at' => '2023-11-10 15:30:00'
-            ],
-            [
-                'id' => 2,
-                'name' => 'Anita Sharma',
-                'location' => 'Maharashtra',
-                'title' => 'Drip Irrigation System Installation',
-                'content' => 'Recently installed a drip irrigation system in my field. It has reduced water usage by 40% and improved crop health significantly. If anyone needs guidance on installation, feel free to ask.',
-                'created_at' => '2023-11-08 11:15:00'
-            ],
-            [
-                'id' => 3,
-                'name' => 'Sunil Verma',
-                'location' => 'Gujarat',
-                'title' => 'Question about Cotton Pest Control',
-                'content' => 'I\'m facing problems with bollworm in my cotton crop. Has anyone tried any effective organic methods for controlling this pest?',
-                'created_at' => '2023-11-05 09:45:00'
-            ]
-        ];
+    if (!$pdo) {
+        error_log("No database connection in getCommunityPosts");
+        return [];
     }
     
-    $sql = "SELECT * FROM community_posts ORDER BY created_at DESC LIMIT :limit OFFSET :offset";
-    return fetchAll($sql, [':limit' => $limit, ':offset' => $offset]);
+    try {
+        // Build the SQL query
+        $sql = "SELECT * FROM community_posts ORDER BY created_at DESC";
+        
+        // Add limit if specified
+        if ($limit !== null) {
+            $sql .= " LIMIT :limit OFFSET :offset";
+        }
+        
+        $stmt = $pdo->prepare($sql);
+        
+        // Bind parameters if limit is specified
+        if ($limit !== null) {
+            $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+            $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+        }
+        
+        $stmt->execute();
+        $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        error_log("Found " . count($posts) . " posts in getCommunityPosts");
+        return $posts;
+    } catch(PDOException $e) {
+        error_log("Error in getCommunityPosts: " . $e->getMessage());
+        return [];
+    }
 }
 
 /**
@@ -563,9 +645,206 @@ function getFarmerStories($limit = 3) {
             'image' => 'farmer3.svg',
             'quote' => 'The educational resources on drip irrigation and water management transformed my farm productivity even during drought conditions.',
             'story' => 'Farming in a water-scarce region of Gujarat was becoming increasingly difficult due to climate change. Through AgroInnovate\'s educational resources, I learned about efficient drip irrigation systems and drought-resistant crop varieties. Implementing these techniques has made my farm resilient even during water shortage periods. The community forum also allowed me to share my experiences with farmers from similar regions, creating a support network.'
+        ],
+        [
+            'name' => 'Meena Kumari',
+            'age' => 35,
+            'location' => 'Jharkhand',
+            'crop' => 'Millets & Vegetables',
+            'image' => 'farmer4.svg',
+            'quote' => 'Switching to organic farming and millet cultivation has not only improved my family\'s health but also increased our income by 30%.',
+            'story' => 'After years of struggling with chemical fertilizers and poor yields, I decided to switch to organic farming. Through AgroInnovate\'s resources, I learned about millet cultivation and organic farming techniques. The transition wasn\'t easy, but the platform\'s community support and expert guidance helped me succeed. Now, my farm produces healthy, chemical-free food, and I\'ve started a small organic produce business that supplies to local markets.'
+        ],
+        [
+            'name' => 'Arun Kumar',
+            'age' => 41,
+            'location' => 'Tamil Nadu',
+            'crop' => 'Banana & Coconut',
+            'image' => 'farmer5.svg',
+            'quote' => 'The precision farming techniques I learned through AgroInnovate have helped me reduce input costs by 25% while increasing my banana yield.',
+            'story' => 'Managing a 10-acre banana plantation was always challenging, especially with rising input costs. After joining AgroInnovate, I learned about precision farming techniques and soil health management. The platform\'s weather alerts helped me plan irrigation and pest control measures better. I\'ve also connected with other banana farmers across India, sharing best practices and market insights.'
+        ],
+        [
+            'name' => 'Priyanka Sharma',
+            'age' => 29,
+            'location' => 'Uttarakhand',
+            'crop' => 'Herbs & Medicinal Plants',
+            'image' => 'farmer6.svg',
+            'quote' => 'AgroInnovate helped me transform my small terrace garden into a successful medicinal plant business.',
+            'story' => 'Starting with just a small terrace garden, I was passionate about growing medicinal plants. Through AgroInnovate\'s resources, I learned about value addition and marketing strategies. The platform connected me with buyers and helped me understand market trends. Today, I run a successful business growing and processing medicinal herbs, employing several women from my village.'
         ]
     ];
     
     return array_slice($stories, 0, $limit);
+}
+
+// Fetch one record from database
+function fetchOne($sql, $params = []) {
+    global $pdo;
+    try {
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetch();
+    } catch(PDOException $e) {
+        error_log("Database Error: " . $e->getMessage());
+        return false;
+    }
+}
+
+// Insert data into database
+function insertData($table, $data) {
+    global $pdo;
+    try {
+        $columns = implode(', ', array_keys($data));
+        $values = implode(', ', array_fill(0, count($data), '?'));
+        $sql = "INSERT INTO $table ($columns) VALUES ($values)";
+        
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute(array_values($data));
+        return $pdo->lastInsertId();
+    } catch(PDOException $e) {
+        error_log("Database Error: " . $e->getMessage());
+        return false;
+    }
+}
+
+// Update data in database
+function updateData($table, $data, $where, $whereParams) {
+    global $pdo;
+    try {
+        $set = implode(' = ?, ', array_keys($data)) . ' = ?';
+        $sql = "UPDATE $table SET $set WHERE $where";
+        
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute(array_merge(array_values($data), $whereParams));
+        return true;
+    } catch(PDOException $e) {
+        error_log("Database Error: " . $e->getMessage());
+        return false;
+    }
+}
+
+// Delete data from database
+function deleteData($table, $where, $params) {
+    global $pdo;
+    try {
+        $sql = "DELETE FROM $table WHERE $where";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute($params);
+        return true;
+    } catch(PDOException $e) {
+        error_log("Database Error: " . $e->getMessage());
+        return false;
+    }
+}
+
+/**
+ * Send an email using PHPMailer with SMTP
+ * 
+ * @param string $to Recipient email address
+ * @param string $subject Email subject
+ * @param string $message Email message body
+ * @param string $from Sender email address
+ * @return bool Whether the email was sent successfully
+ */
+function sendEmail($to, $subject, $message, $from) {
+    $autoloadPath = __DIR__ . '/../vendor/autoload.php';
+    
+    // Check if PHPMailer is installed
+    if (!file_exists($autoloadPath)) {
+        error_log("PHPMailer not installed. Please run 'composer install' in the project root directory.");
+        return false;
+    }
+    
+    // Include PHPMailer classes
+    require_once $autoloadPath;
+    
+    // Create a new PHPMailer instance
+    $mail = new PHPMailer\PHPMailer\PHPMailer(true);
+    
+    try {
+        // Server settings
+        $mail->isSMTP();
+        $mail->Host = 'smtp.gmail.com';
+        $mail->SMTPAuth = true;
+        $mail->Username = 'akashjasrotia6a@gmail.com'; // Your Gmail address
+        $mail->Password = 'fwfk ebuw xqdu iqah'; // Your Gmail app password
+        $mail->SMTPSecure = PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
+        $mail->Port = 587;
+        $mail->CharSet = 'UTF-8';
+        
+        // Recipients
+        $mail->setFrom($from ?: 'akashjasrotia6a@gmail.com', 'AgroInnovate');
+        $mail->addAddress($to);
+        if ($from) {
+            $mail->addReplyTo($from);
+        }
+        
+        // Content
+        $mail->isHTML(false);
+        $mail->Subject = $subject;
+        $mail->Body = $message;
+        
+        // Send email
+        $mail->send();
+        return true;
+    } catch (Exception $e) {
+        error_log("Failed to send email to $to. Error: " . $mail->ErrorInfo);
+        return false;
+    }
+}
+
+// Password validation function
+function validatePassword($password) {
+    $errors = [];
+    
+    // Minimum 8 characters
+    if(strlen($password) < 8) {
+        $errors[] = "Password must be at least 8 characters long";
+    }
+    
+    // Must contain at least one uppercase letter
+    if(!preg_match('/[A-Z]/', $password)) {
+        $errors[] = "Password must contain at least one uppercase letter";
+    }
+    
+    // Must contain at least one lowercase letter
+    if(!preg_match('/[a-z]/', $password)) {
+        $errors[] = "Password must contain at least one lowercase letter";
+    }
+    
+    // Must contain at least one number
+    if(!preg_match('/[0-9]/', $password)) {
+        $errors[] = "Password must contain at least one number";
+    }
+    
+    // Must contain at least one special character
+    if(!preg_match('/[!@#$%^&*(),.?":{}|<>]/', $password)) {
+        $errors[] = "Password must contain at least one special character";
+    }
+    
+    return [
+        'isValid' => empty($errors),
+        'errors' => $errors
+    ];
+}
+
+// Phone number validation function
+function validatePhone($phone) {
+    // Remove any non-digit characters
+    $cleanPhone = preg_replace('/\D/', '', $phone);
+    
+    // Check if it's a valid Indian phone number (10 digits, starting with 6-9)
+    if(!preg_match('/^[6-9]\d{9}$/', $cleanPhone)) {
+        return [
+            'isValid' => false,
+            'error' => "Please enter a valid 10-digit phone number starting with 6-9"
+        ];
+    }
+    
+    return [
+        'isValid' => true,
+        'error' => null
+    ];
 }
 ?>
