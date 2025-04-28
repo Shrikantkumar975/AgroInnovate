@@ -1,23 +1,30 @@
 <?php
-
-// Create flags directory if it doesn't exist
-if (!file_exists('assets/flags')) {
-    mkdir('assets/flags', 0777, true);
-}
-
-// Flag images in base64
-$flags = [
-    'en' => 'iVBORw0KGgoAAAANSUhEUgAAABAAAAALCAMAAABBPP0LAAAAG1BMVEUdm/8Aa/89h/8Bed/f7/+/v/8/P/8/P/+/v7/KIzUVAAAAOklEQVR4AY3LQREAMAgDsWb/l5tDBJ4vkAAhIwDhBAiBMAKhMIJQGEEojCCE4QSBEJxAKIwgFEYQCiMAX4Y3Z75PPsEAAAAASUVORK5CYII=',
-    'hi' => 'iVBORw0KGgoAAAANSUhEUgAAABAAAAALCAMAAACBPP0LAAAAnFBMVEX/mTMA/0YA/4YAgFYAhFYA/4YA/4YA/4YA/4YA/4YA/4YA/4YA/4YA/4YA/4YA/4YA/4YA/4YA/4YA/4YA/4YA/4YA/4YA/4YA/4YA/4YA/4YA/4YA/4YA/4YA/4YA/4YA/4YA/4YA/4YA/4YA/4YA/4YA/4YA/4YA/4YA/4YA/4YA/4YA/4YA/4YA/4YA/4YA/4YA/4YA/4YA/4YA/4aQ6E7HAAAANHRSTlMAAAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8gISIjJCUmJygpKissLS4vMDEyJ8V0/QAAAE5JREFUeF5VyEcSgDAMBMEVOeecczD//zccwGOvNTPrwQhGMIIRjGAEIxjBCEYwghGMYAQjGMEIRjCCEYxgBCMYwQhGMIIRjGAEI/wAzHEF4yUf5JAAAAAASUVORK5CYII=',
-    'pa' => 'iVBORw0KGgoAAAANSUhEUgAAABAAAAALCAMAAABBPP0LAAAAXVBMVEUAZs0AZs0AZs0AZs0AZs0AZs0AZs0AZs0AZs0AZs0AZs0AZs0AZs0AZs0AZs0AZs0AZs0AZs0AZs0AZs0AZs0AZs0AZs0AZs0AZs0AZs0AZs0AZs0AZs0AZs0AZs2l8j/RAAAAH3RSTlMAAAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHqRz9QAAAEJJREFUeF5VyEcOgDAMBMEFQui9hvz/nxjBh73WzKwHIxjBCEYwghGMYAQjGMEIRjCCEYxgBCMYwQhGMIIRjGAEI/wAJ2YF49t8qyQAAAAASUVORK5CYII='
+// Script to generate flag images for language selection
+$languages = [
+    'en' => ['name' => 'English', 'flag' => '🇬🇧'],
+    'hi' => ['name' => 'हिंदी', 'flag' => '🇮🇳']
 ];
 
-// Save each flag
-foreach ($flags as $code => $base64) {
-    $file = "assets/flags/{$code}.png";
-    file_put_contents($file, base64_decode($base64));
-    echo "Created {$file}\n";
+// Create flags directory if it doesn't exist
+$flagsDir = __DIR__ . '/assets/flags';
+if (!file_exists($flagsDir)) {
+    mkdir($flagsDir, 0777, true);
 }
 
-echo "All flags created successfully!\n";
+foreach ($languages as $code => $lang) {
+    // Create an image with dimensions 30x20
+    $img = imagecreatetruecolor(30, 20);
+    
+    // Add flag emoji
+    $text = $lang['flag'];
+    
+    // Save the image
+    $filename = $flagsDir . '/' . $code . '.png';
+    imagepng($img, $filename);
+    imagedestroy($img);
+    
+    echo "Created flag for {$lang['name']} ({$code})\n";
+}
+
+echo "Flag generation complete!\n";
 ?> 

@@ -6,7 +6,7 @@ if (isset($_GET['language'])) {
     
     // Only allow valid languages
     if (in_array($language, ['en', 'hi', 'pa'])) {
-        $_SESSION['language'] = $language;
+        $_SESSION['lang'] = $language;
     }
 }
 

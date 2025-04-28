@@ -1,7 +1,21 @@
 <?php
-// Include header and functions
+session_start();
+require_once 'includes/session.php';
+require_once 'includes/functions.php';
+require_once 'includes/db_connect.php';
+
+// Redirect if not logged in with message
+if (!isset($_SESSION['user_id'])) {
+    $_SESSION['message'] = "Please login to access educational resources.";
+    $_SESSION['message_type'] = "danger";
+    header('Location: login.php');
+    exit;
+}
+
+// Include header
 include_once 'includes/header.php';
-include_once 'includes/functions.php';
+
+
 ?>
 
 <!-- Page Header -->

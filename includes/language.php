@@ -9,8 +9,8 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 // Set default language if not set
-if (!isset($_SESSION['language'])) {
-    $_SESSION['language'] = 'en';
+if (!isset($_SESSION['lang'])) {
+    $_SESSION['lang'] = 'en';
 }
 
 /**
@@ -19,7 +19,7 @@ if (!isset($_SESSION['language'])) {
  * @return string The current language code
  */
 function getCurrentLanguage() {
-    return $_SESSION['language'];
+    return $_SESSION['lang'];
 }
 
 /**
@@ -30,7 +30,7 @@ function getCurrentLanguage() {
  */
 function setCurrentLanguage($lang) {
     if (in_array($lang, ['en', 'hi', 'pa'])) {
-        $_SESSION['language'] = $lang;
+        $_SESSION['lang'] = $lang;
         
         // Also set a cookie for persistence across sessions
         setcookie('preferred_language', $lang, time() + (86400 * 30), '/'); // 30 days

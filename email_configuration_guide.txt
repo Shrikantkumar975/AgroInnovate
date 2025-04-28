@@ -1,47 +1,54 @@
-AgroInnovate Email Configuration Guide
-=====================================
+Email Configuration Guide for AgroInnovate
 
-When you need to update email credentials in the future, you'll need to modify two files:
+This guide explains how to set up and configure email functionality in the AgroInnovate application.
 
-1. File: includes/functions.php
-   Location: Line ~696 in the sendEmail() function
-   What to change:
-   - $mail->Username = 'your-new-email@gmail.com'
-   - $mail->Password = 'your-new-app-password'
+1. SMTP Configuration
+-------------------
+- Open includes/email_config.php
+- Update the following settings with your SMTP server details:
+  * SMTP_HOST
+  * SMTP_PORT
+  * SMTP_USERNAME
+  * SMTP_PASSWORD
+  * SMTP_FROM_EMAIL
+  * SMTP_FROM_NAME
 
-2. File: contact.php
-   Location: Line ~34 in the form processing section
-   What to change:
-   - $adminEmail = 'your-new-email@gmail.com'
-   
-   Also update the displayed email in the contact information section (around line ~90):
-   - <p>your-new-email@gmail.com</p>
-
-Steps to Generate a New Gmail App Password:
------------------------------------------
-1. Go to your Google Account settings (https://myaccount.google.com)
-2. Click on "Security" in the left navigation
-3. Under "2-Step Verification", click on "App passwords"
-4. Select "Mail" as the app and your device
-5. Click "Generate"
-6. Copy the 16-character password (it will look like: xxxx xxxx xxxx xxxx)
-7. Use this password in the configuration above
-
-Important Notes:
+2. Email Testing
 --------------
-- Never share your App Password with anyone
-- If you suspect your password is compromised, delete it from Google Account settings and generate a new one
-- Keep 2-Step Verification enabled on your Google Account
-- Make sure to use the exact same email address in both files
-- The App Password is 16 characters with spaces (format: xxxx xxxx xxxx xxxx)
+- After configuring SMTP settings, use test_email.php to verify the setup
+- Update the test email address in test_email.php
+- Run the script to ensure emails are being sent correctly
 
-Current Configuration:
---------------------
-Email: shrikumar975@gmail.com
-Last updated: 2024-04-24
+3. Security Considerations
+-----------------------
+- Never commit SMTP credentials to version control
+- Use environment variables or secure configuration files
+- Keep SMTP passwords secure and change them periodically
+- Use SSL/TLS encryption when available
 
-For security reasons, if you need to disable the current email setup:
-1. Go to your Google Account
-2. Security → App Passwords
-3. Delete the App Password for this application
-4. Generate a new one when needed 
+4. Troubleshooting
+----------------
+Common issues and solutions:
+a) Connection failed
+   - Check if SMTP_HOST and SMTP_PORT are correct
+   - Verify firewall settings
+   - Ensure SSL/TLS settings match your server
+
+b) Authentication failed
+   - Verify SMTP_USERNAME and SMTP_PASSWORD
+   - Check if account has necessary permissions
+   - Ensure 2FA is properly configured if enabled
+
+c) Email not received
+   - Check spam/junk folders
+   - Verify recipient email address format
+   - Check if domain has proper SPF/DKIM records
+
+5. Support
+---------
+For additional help:
+- Consult PHPMailer documentation
+- Contact your email service provider
+- Check server logs for detailed error messages
+
+Remember to test thoroughly in a development environment before deploying to production. 

@@ -1,18 +1,21 @@
 <?php
 require_once 'includes/email_config.php';
+require_once 'includes/smtp.php';
 
-// Test email parameters
-$to = 'akashjasrotia6a@gmail.com';
-$subject = 'Test Email from AgroInnovate';
-$message = 'This is a test email to verify the SMTP configuration is working correctly.';
+// Test email configuration
+$to = "test@example.com"; // Replace with your test email
+$subject = "Test Email from AgroInnovate";
+$message = "This is a test email to verify the email configuration is working correctly.";
 
+// Try to send the email
 try {
-    $result = sendEmail($to, $subject, $message);
-    if ($result === true) {
-        echo "Test email sent successfully!";
-    } else {
-        echo "Failed to send test email. Error: " . $result;
-    }
+    $mail = configureEmail();
+    $mail->addAddress($to);
+    $mail->Subject = $subject;
+    $mail->Body = $message;
+    $mail->send();
+    echo "Test email sent successfully!";
 } catch (Exception $e) {
-    echo "An error occurred: " . $e->getMessage();
-} 
+    echo "Error sending test email: " . $mail->ErrorInfo;
+}
+?> 

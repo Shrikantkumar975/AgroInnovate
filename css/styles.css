@@ -152,6 +152,7 @@ img:not([src]):after {
 }
 
 .navbar-nav .nav-link.active {
+    border-radius: 20px;
     border-bottom: 2px solid var(--primary-color);
 }
 

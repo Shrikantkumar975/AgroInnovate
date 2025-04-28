@@ -7,7 +7,7 @@ require_once 'includes/db_connect.php';
 // Redirect if not logged in with message
 if (!isset($_SESSION['user_id'])) {
     $_SESSION['message'] = "Please login to access market prices and trends.";
-    $_SESSION['message_type'] = "warning";
+    $_SESSION['message_type'] = "danger";
     header('Location: login.php');
     exit;
 }

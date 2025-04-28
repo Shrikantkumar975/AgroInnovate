@@ -21,14 +21,20 @@ if (isset($_POST['login'])) {
         $user = fetchOne($sql, [$email]);
         
         if ($user && password_verify($password, $user['password'])) {
-            // Login successful
-            $_SESSION['user_id'] = $user['id'];
-            $_SESSION['user_name'] = $user['name'];
-            $_SESSION['user_email'] = $user['email'];
-            
-            // Redirect to home page
-            header('Location: index.php');
-            exit;
+            // Check if email is verified
+            if ($user['is_verified'] == 0) {
+                $loginError = 'Please verify your email address before logging in. 
+                    <a href="resend_verification.php?email=' . urlencode($email) . '">Click here</a> to resend verification email.';
+            } else {
+                // Login successful
+                $_SESSION['user_id'] = $user['id'];
+                $_SESSION['user_name'] = $user['name'];
+                $_SESSION['user_email'] = $user['email'];
+                
+                // Redirect to home page
+                header('Location: index.php');
+                exit;
+            }
         } else {
             $loginError = 'Invalid email or password.';
         }
@@ -43,81 +49,131 @@ if (isset($_POST['register'])) {
     $confirmPassword = $_POST['register_password_confirm'];
     $phone = sanitizeInput($_POST['register_phone']);
     
-    // Validate inputs
-    if (empty($name) || empty($email) || empty($password) || empty($phone)) {
-        $registerError = 'All fields are required.';
-    } elseif (!isValidEmail($email)) {
-        $registerError = 'Please enter a valid email address.';
-    } elseif ($password !== $confirmPassword) {
-        $registerError = 'Passwords do not match.';
-    } elseif (strlen($password) < 6) {
-        $registerError = 'Password must be at least 6 characters long.';
-    } else {
-        try {
-            // First, ensure the users table exists
-            $pdo->exec("CREATE TABLE IF NOT EXISTS `users` (
-                `id` int(11) NOT NULL AUTO_INCREMENT,
-                `name` varchar(100) NOT NULL,
-                `email` varchar(100) NOT NULL UNIQUE,
-                `password` varchar(255) NOT NULL,
-                `phone` varchar(20) NOT NULL,
-                `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                PRIMARY KEY (`id`)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
+    // Generate verification token
+    $verification_token = bin2hex(random_bytes(32));
+    
+    // Hash the password
+    $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+    
+    try {
+        // First, ensure the users table exists
+        $pdo->exec("CREATE TABLE IF NOT EXISTS `users` (
+            `id` int(11) NOT NULL AUTO_INCREMENT,
+            `name` varchar(100) NOT NULL,
+            `email` varchar(100) NOT NULL UNIQUE,
+            `password` varchar(255) NOT NULL,
+            `phone` varchar(20) NOT NULL,
+            `is_verified` tinyint(1) NOT NULL DEFAULT 0,
+            `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            PRIMARY KEY (`id`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
 
-            // Check if email already exists
-            $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ?");
-            $stmt->execute([$email]);
+        // Check if email already exists
+        $stmt = $pdo->prepare("SELECT * FROM users WHERE email = ?");
+        $stmt->execute([$email]);
+        
+        if ($stmt->rowCount() > 0) {
+            $registerError = 'Email already registered. Please use a different email or login.';
+        } else {
+            // Log registration attempt
+            error_log("Attempting to register user: " . $email);
             
-            if ($stmt->rowCount() > 0) {
-                $registerError = 'Email already registered. Please use a different email or login.';
-            } else {
-                // Hash password
-                $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+            // Insert user into database
+            $stmt = $pdo->prepare("INSERT INTO users (name, email, password, phone, is_verified) VALUES (?, ?, ?, ?, 0)");
+            
+            try {
+                $result = $stmt->execute([$name, $email, $hashed_password, $phone]);
+                error_log("Registration execute result: " . ($result ? "success" : "failed"));
+                if (!$result) {
+                    error_log("SQL Error Info: " . print_r($stmt->errorInfo(), true));
+                }
                 
-                // Insert user into database
-                $stmt = $pdo->prepare("INSERT INTO users (name, email, password, phone) VALUES (?, ?, ?, ?)");
-                
-                if ($stmt->execute([$name, $email, $hashedPassword, $phone])) {
-                    // Send notification to admin
-                    $adminEmail = 'akashjasrotia6a@gmail.com';
-                    $adminSubject = 'New User Registration on AgroInnovate';
-                    $adminMessage = "A new user has registered on AgroInnovate:\n\n";
-                    $adminMessage .= "Name: $name\n";
-                    $adminMessage .= "Email: $email\n";
-                    $adminMessage .= "Phone: $phone\n";
-                    $adminMessage .= "Registration Date: " . date('Y-m-d H:i:s') . "\n";
+                if ($result) {
+                    $user_id = $pdo->lastInsertId();
+                    error_log("New user ID: " . $user_id);
                     
-                    // Send admin notification with the system email as sender
-                    sendEmail($adminEmail, $adminSubject, $adminMessage, 'akashjasrotia6a@gmail.com');
+                    // Store verification token in a separate table
+                    $stmt = $pdo->prepare("CREATE TABLE IF NOT EXISTS `email_verification` (
+                        `id` int(11) NOT NULL AUTO_INCREMENT,
+                        `user_id` int(11) NOT NULL,
+                        `token` varchar(64) NOT NULL,
+                        `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                        PRIMARY KEY (`id`),
+                        FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
+                    )");
+                    $stmt->execute();
                     
-                    // Send welcome email to user
-                    $userSubject = 'Welcome to AgroInnovate - Registration Confirmation';
-                    $userMessage = "Hello $name,\n\nThank you for registering with AgroInnovate!\n\n";
-                    $userMessage .= "Your account has been successfully created with the following details:\n\n";
-                    $userMessage .= "Email: $email\n";
-                    $userMessage .= "Name: $name\n\n";
-                    $userMessage .= "You can now log in to your account and start exploring our services.\n\n";
-                    $userMessage .= "Best regards,\nThe AgroInnovate Team";
+                    $stmt = $pdo->prepare("INSERT INTO email_verification (user_id, token) VALUES (?, ?)");
+                    $stmt->execute([$user_id, $verification_token]);
                     
-                    // Send welcome email with the system email as sender
-                    sendEmail($email, $userSubject, $userMessage, 'akashjasrotia6a@gmail.com');
+                    // Send verification email to user
+                    $to = $email;
+                    $subject = ($_SESSION['language'] == 'en') ? 
+                        "Welcome to AgroInnovate - Please Verify Your Email" : 
+                        "एग्रोइनोवेट में आपका स्वागत है - कृपया अपना ईमेल सत्यापित करें";
+
+                    $verification_link = "http://" . $_SERVER['HTTP_HOST'] . "/verify.php?token=" . $verification_token;
                     
-                    $registerSuccess = "Registration successful! Welcome emails have been sent.";
+                    $welcome_text = ($_SESSION['language'] == 'en') ? 'Welcome to AgroInnovate!' : 'एग्रोइनोवेट में आपका स्वागत है!';
+                    $dear_text = ($_SESSION['language'] == 'en') ? 'Dear' : 'प्रिय';
+                    $verify_text = ($_SESSION['language'] == 'en') ? 
+                        'Thank you for registering with AgroInnovate. Please verify your email address by clicking the button below:' : 
+                        'एग्रोइनोवेट में पंजीकरण करने के लिए धन्यवाद। कृपया नीचे दिए गए बटन पर क्लिक करके अपना ईमेल पता सत्यापित करें:';
+                    $button_text = ($_SESSION['language'] == 'en') ? 'Verify Email Address' : 'ईमेल पता सत्यापित करें';
+                    $copy_text = ($_SESSION['language'] == 'en') ? 'Or copy and paste this link in your browser:' : 'या इस लिंक को अपने ब्राउज़र में कॉपी और पेस्ट करें:';
+                    $expire_text = ($_SESSION['language'] == 'en') ? 'This link will expire in 24 hours.' : 'यह लिंक 24 घंटों में समाप्त हो जाएगा।';
+                    $ignore_text = ($_SESSION['language'] == 'en') ? 
+                        "If you didn't create an account with AgroInnovate, please ignore this email." : 
+                        "यदि आपने एग्रोइनोवेट में खाता नहीं बनाया है, तो कृपया इस ईमेल को अनदेखा करें।";
+
+                    $message = "
+                        <html>
+                        <body style='font-family: Arial, sans-serif;'>
+                            <div style='max-width: 600px; margin: 0 auto; padding: 20px;'>
+                                <h2 style='color: #2E7D32;'>$welcome_text</h2>
+                                <p>$dear_text $name,</p>
+                                <p>$verify_text</p>
+                                <div style='text-align: center; margin: 30px 0;'>
+                                    <a href='$verification_link' 
+                                       style='background-color: #2E7D32; color: white; padding: 12px 30px; 
+                                              text-decoration: none; border-radius: 5px;'>
+                                        $button_text
+                                    </a>
+                                </div>
+                                <p>$copy_text</p>
+                                <p style='word-break: break-all;'>$verification_link</p>
+                                <p>$expire_text</p>
+                                <hr style='margin: 30px 0;'>
+                                <p style='color: #666; font-size: 12px;'>
+                                    $ignore_text
+                                </p>
+                            </div>
+                        </body>
+                        </html>
+                    ";
                     
-                    // Redirect to login tab
-                    header('Location: login.php?tab=login&registered=1');
-                    exit;
+                    if (sendEmail($to, $subject, $message)) {
+                        $registerSuccess = "Registration successful! Please check your email to verify your account.";
+                        
+                        // Redirect to login tab
+                        header('Location: login.php?tab=login&registered=1');
+                        exit;
+                    } else {
+                        throw new Exception("Failed to send verification email");
+                    }
                 } else {
                     $registerError = 'Registration failed. Please try again later.';
                     error_log("Failed to insert user. SQL Error: " . implode(", ", $stmt->errorInfo()));
                 }
+            } catch (Exception $e) {
+                $registerError = 'Registration failed. Please try again later.';
+                error_log("Registration error: " . $e->getMessage());
             }
-        } catch (PDOException $e) {
-            $registerError = 'Registration failed. Please try again later.';
-            error_log("Registration error: " . $e->getMessage());
         }
+    } catch (Exception $e) {
+        $registerError = 'Registration failed. Please try again later.';
+        error_log("Registration error: " . $e->getMessage());
     }
 }
 
@@ -289,40 +345,17 @@ if (isset($_SESSION['message'])) {
                                 <?php echo ($_SESSION['language'] == 'en') ? 'Password' : 'पासवर्ड'; ?>
                             </label>
                             <input type="password" class="form-control" id="login_password" name="login_password" required>
+                            <div class="mt-2">
+                                <a href="forgot_password.php" class="text-decoration-none" data-en="Forgot Password?" data-hi="पासवर्ड भूल गए?">
+                                    <?php echo ($_SESSION['language'] == 'en') ? 'Forgot Password?' : 'पासवर्ड भूल गए?'; ?>
+                                </a>
+                            </div>
                         </div>
                         
                         <button type="submit" name="login" class="btn btn-primary w-100" data-en="Login" data-hi="लॉगिन">
                             <?php echo ($_SESSION['language'] == 'en') ? 'Login' : 'लॉगिन'; ?>
                         </button>
                     </form>
-                    
-                    <div class="forgot-password">
-                        <a href="#" id="forgot-password-link" data-en="Forgot Password?" data-hi="पासवर्ड भूल गए?">
-                            <?php echo ($_SESSION['language'] == 'en') ? 'Forgot Password?' : 'पासवर्ड भूल गए?'; ?>
-                        </a>
-                    </div>
-                    
-                    <!-- Forgot Password Form (Hidden by default) -->
-                    <div id="forgot-password-form" style="display: none;">
-                        <form method="post" action="login.php">
-                            <div class="form-group">
-                                <label for="forgot_email" data-en="Enter your email" data-hi="अपना ईमेल दर्ज करें">
-                                    <?php echo ($_SESSION['language'] == 'en') ? 'Enter your email' : 'अपना ईमेल दर्ज करें'; ?>
-                                </label>
-                                <input type="email" class="form-control" id="forgot_email" name="forgot_email" required>
-                            </div>
-                            
-                            <button type="submit" name="forgot_password" class="btn btn-outline-primary w-100" data-en="Reset Password" data-hi="पासवर्ड रीसेट करें">
-                                <?php echo ($_SESSION['language'] == 'en') ? 'Reset Password' : 'पासवर्ड रीसेट करें'; ?>
-                            </button>
-                        </form>
-                        
-                        <div class="mt-3 text-center">
-                            <a href="#" id="back-to-login" data-en="Back to Login" data-hi="लॉगिन पर वापस जाएं">
-                                <?php echo ($_SESSION['language'] == 'en') ? 'Back to Login' : 'लॉगिन पर वापस जाएं'; ?>
-                            </a>
-                        </div>
-                    </div>
                     
                     <div class="auth-divider">
                         <span data-en="New user?" data-hi="नए उपयोगकर्ता?">

@@ -5,6 +5,12 @@ require_once __DIR__ . '/config.php';
 // Include database connection
 require_once __DIR__ . '/db.php';
 
+// Include PHPMailer
+require_once __DIR__ . '/../vendor/autoload.php';
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\SMTP;
+use PHPMailer\PHPMailer\Exception;
+
 /**
  * Sanitize user input to prevent XSS attacks
  * 
@@ -744,52 +750,45 @@ function deleteData($table, $where, $params) {
  * @param string $to Recipient email address
  * @param string $subject Email subject
  * @param string $message Email message body
- * @param string $from Sender email address
  * @return bool Whether the email was sent successfully
  */
-function sendEmail($to, $subject, $message, $from) {
-    $autoloadPath = __DIR__ . '/../vendor/autoload.php';
-    
-    // Check if PHPMailer is installed
-    if (!file_exists($autoloadPath)) {
-        error_log("PHPMailer not installed. Please run 'composer install' in the project root directory.");
-        return false;
-    }
-    
-    // Include PHPMailer classes
-    require_once $autoloadPath;
-    
-    // Create a new PHPMailer instance
-    $mail = new PHPMailer\PHPMailer\PHPMailer(true);
-    
+function sendEmail($to, $subject, $message) {
     try {
+        // Create a new PHPMailer instance
+        $mail = new PHPMailer(true);
+
         // Server settings
         $mail->isSMTP();
         $mail->Host = 'smtp.gmail.com';
         $mail->SMTPAuth = true;
-        $mail->Username = 'akashjasrotia6a@gmail.com'; // Your Gmail address
-        $mail->Password = 'fwfk ebuw xqdu iqah'; // Your Gmail app password
-        $mail->SMTPSecure = PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
+        $mail->Username = 'akashjasrotia6a@gmail.com';
+        $mail->Password = 'fwfk ebuw xqdu iqah';
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port = 587;
         $mail->CharSet = 'UTF-8';
         
+        // Enable debugging
+        $mail->SMTPDebug = 2;
+        $mail->Debugoutput = function($str, $level) {
+            error_log("SMTP Debug: $str");
+        };
+
         // Recipients
-        $mail->setFrom($from ?: 'akashjasrotia6a@gmail.com', 'AgroInnovate');
+        $mail->setFrom('akashjasrotia6a@gmail.com', 'AgroInnovate');
         $mail->addAddress($to);
-        if ($from) {
-            $mail->addReplyTo($from);
-        }
-        
+
         // Content
-        $mail->isHTML(false);
+        $mail->isHTML(true);
         $mail->Subject = $subject;
         $mail->Body = $message;
-        
+        $mail->AltBody = strip_tags($message);
+
         // Send email
-        $mail->send();
-        return true;
+        $result = $mail->send();
+        error_log("Email sent successfully to: $to");
+        return $result;
     } catch (Exception $e) {
-        error_log("Failed to send email to $to. Error: " . $mail->ErrorInfo);
+        error_log("Failed to send email to $to. Error: " . $e->getMessage());
         return false;
     }
 }

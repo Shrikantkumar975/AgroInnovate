@@ -20,14 +20,14 @@ if (isset($_SESSION['success_message'])) {
     <div class="container">
         <div class="row align-items-center">
             <div class="col-md-6 hero-content">
-                <h1 class="hero-title" data-en="Empowering Indian Farmers" data-hi="भारतीय किसानों को सशक्त बनाना">
-                    <?php echo ($_SESSION['language'] == 'en') ? 'Empowering Indian Farmers' : 'भारतीय किसानों को सशक्त बनाना'; ?>
+                <h1 class="hero-title" data-lang-en="Empowering Indian Farmers" data-lang-hi="भारतीय किसानों को सशक्त बनाना">
+                    <?php echo ($_SESSION['lang'] == 'en') ? 'Empowering Indian Farmers' : 'भारतीय किसानों को सशक्त बनाना'; ?>
                 </h1>
-                <p class="hero-subtitle" data-en="Real-time weather updates, market information, and agricultural education at your fingertips." data-hi="वास्तविक समय के मौसम अपडेट, बाजार की जानकारी, और कृषि शिक्षा आपकी उंगलियों पर।">
-                    <?php echo ($_SESSION['language'] == 'en') ? 'Real-time weather updates, market information, and agricultural education at your fingertips.' : 'वास्तविक समय के मौसम अपडेट, बाजार की जानकारी, और कृषि शिक्षा आपकी उंगलियों पर।'; ?>
+                <p class="hero-subtitle" data-lang-en="Real-time weather updates, market information, and agricultural education at your fingertips." data-lang-hi="वास्तविक समय के मौसम अपडेट, बाजार की जानकारी, और कृषि शिक्षा आपकी उंगलियों पर।">
+                    <?php echo ($_SESSION['lang'] == 'en') ? 'Real-time weather updates, market information, and agricultural education at your fingertips.' : 'वास्तविक समय के मौसम अपडेट, बाजार की जानकारी, और कृषि शिक्षा आपकी उंगलियों पर।'; ?>
                 </p>
-                <a href="/weather.php" class="hero-cta" data-en="Check Today's Weather" data-hi="आज का मौसम देखें">
-                    <?php echo ($_SESSION['language'] == 'en') ? 'Check Today\'s Weather' : 'आज का मौसम देखें'; ?>
+                <a href="/weather.php" class="hero-cta" data-lang-en="Check Today's Weather" data-lang-hi="आज का मौसम देखें">
+                    <?php echo ($_SESSION['lang'] == 'en') ? 'Check Today\'s Weather' : 'आज का मौसम देखें'; ?>
                 </a>
             </div>
             <div class="col-md-6 hero-image">

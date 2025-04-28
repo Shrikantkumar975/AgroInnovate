@@ -209,7 +209,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_profile'])) {
                 <div class="profile-name">
                     <h2><?php echo htmlspecialchars($userData['name']); ?></h2>
                     <div class="profile-email"><?php echo htmlspecialchars($userData['email']); ?></div>
-                    <div class="profile-joined">Joined: <?php echo date('F j, Y', strtotime($userData['created_at'])); ?></div>
+                    <!-- <div class="profile-joined">Joined: <?php
+                    //  echo date('F j, Y', strtotime($userData['created_at'])); 
+                     ?></div> -->
                 </div>
             </div>
             

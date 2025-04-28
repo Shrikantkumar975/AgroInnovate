@@ -7,7 +7,7 @@ require_once 'includes/db_connect.php';
 // Redirect if not logged in with message
 if (!isset($_SESSION['user_id'])) {
     $_SESSION['message'] = "Please login to access the community section.";
-    $_SESSION['message_type'] = "warning";
+    $_SESSION['message_type'] = "danger";
     header('Location: login.php');
     exit;
 }
@@ -21,41 +21,54 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $title = trim($_POST['title']);
     $content = trim($_POST['content']);
     $location = trim($_POST['location']);
-    
+
     // Handle image upload
     $image_path = NULL;
     if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
-        $upload_dir = 'uploads/community/';
-        if (!file_exists($upload_dir)) {
-            mkdir($upload_dir, 0777, true);
-        }
-        
-        $file_extension = pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
-        $new_filename = uniqid() . '.' . $file_extension;
-        $upload_path = $upload_dir . $new_filename;
-        
-        if (move_uploaded_file($_FILES['image']['tmp_name'], $upload_path)) {
-            $image_path = $upload_path;
+        $allowed_types = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+        $file_type = mime_content_type($_FILES['image']['tmp_name']); // Get MIME type based on file content
+
+        if (in_array($file_type, $allowed_types)) {
+            $upload_dir = 'uploads/community/';
+            if (!file_exists($upload_dir)) {
+                mkdir($upload_dir, 0777, true);
+            }
+
+            $file_extension = pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
+            $new_filename = uniqid() . '.' . $file_extension;
+            $upload_path = $upload_dir . $new_filename;
+
+            if (move_uploaded_file($_FILES['image']['tmp_name'], $upload_path)) {
+                $image_path = $upload_path;
+            } else {
+                $_SESSION['message'] = "Error uploading image.";
+                $_SESSION['message_type'] = "danger";
+            }
+        } else {
+            $_SESSION['message'] = "Invalid file type. Only JPEG, PNG, GIF, and WebP images are allowed.";
+            $_SESSION['message_type'] = "warning";
         }
     }
-    
-    // Insert post into database using user's name from fetched data
-    $stmt = $pdo->prepare("INSERT INTO community_posts (user_id, name, title, content, location, image_path) VALUES (?, ?, ?, ?, ?, ?)");
-    $stmt->execute([$user_id, $user['name'], $title, $content, $location, $image_path]);
-    
-    // Redirect to prevent form resubmission
-    header('Location: community.php');
-    exit;
+
+    // Insert post into database
+    if (!isset($_SESSION['message'])) {
+        $stmt = $pdo->prepare("INSERT INTO community_posts (user_id, name, title, content, location, image_path) VALUES (?, ?, ?, ?, ?, ?)");
+        $stmt->execute([$user_id, $user['name'], $title, $content, $location, $image_path]);
+        // Redirect to prevent form resubmission
+        header('Location: community.php');
+        exit;
+    }
 }
 
 // Fetch existing posts with like status for current user
 $stmt = $pdo->prepare("
-    SELECT 
+    SELECT
         cp.*,
         u.name as username,
-        CASE WHEN pl.id IS NOT NULL THEN 1 ELSE 0 END as user_liked
-    FROM community_posts cp 
-    LEFT JOIN users u ON cp.user_id = u.id 
+        CASE WHEN pl.id IS NOT NULL THEN 1 ELSE 0 END as user_liked,
+        (SELECT COUNT(*) FROM post_likes WHERE post_id = cp.id) as likes
+    FROM community_posts cp
+    LEFT JOIN users u ON cp.user_id = u.id
     LEFT JOIN post_likes pl ON cp.id = pl.post_id AND pl.user_id = ?
     ORDER BY cp.created_at DESC
 ");
@@ -68,13 +81,15 @@ include_once 'includes/header.php';
 
 <div class="container py-5">
     <div class="row">
-        <!-- Community Feed -->
         <div class="col-lg-8">
             <div class="card shadow-sm mb-4">
                 <div class="card-body">
                     <h3 class="card-title mb-4">Community Feed</h3>
                     <?php if (isset($_SESSION['user_id'])): ?>
-                    <form action="community.php" method="POST" enctype="multipart/form-data" class="mb-4">
+                    <form action="community.php" method="POST" enctype="multipart/form-data" class="mb-4" id="newPostForm">
+                        <?php 
+                        include 'includes/message.php'; 
+                        ?>
                         <div class="mb-3">
                             <label for="title" class="form-label">Title</label>
                             <input type="text" class="form-control" id="title" name="title" required>
@@ -90,6 +105,7 @@ include_once 'includes/header.php';
                         <div class="mb-3">
                             <label for="image" class="form-label">Image (optional)</label>
                             <input type="file" class="form-control" id="image" name="image" accept="image/*">
+                            <div class="form-text text-muted">Only JPEG, PNG, GIF, and WebP images are allowed.</div>
                         </div>
                         <button type="submit" class="btn btn-success">Post</button>
                     </form>
@@ -104,7 +120,7 @@ include_once 'includes/header.php';
                             <div class="card mb-3">
                                 <div class="card-header d-flex justify-content-between align-items-center">
                                     <div>
-                                        <strong><?php echo htmlspecialchars($post['name']); ?></strong>
+                                        <strong><?php echo htmlspecialchars($post['username']); ?></strong>
                                         <small class="text-muted">(@user<?php echo htmlspecialchars($post['user_id']); ?>)</small>
                                         <small class="text-muted ms-2"><?php echo htmlspecialchars($post['location']); ?></small>
                                     </div>
@@ -114,14 +130,14 @@ include_once 'includes/header.php';
                                     <h5 class="card-title"><?php echo htmlspecialchars($post['title']); ?></h5>
                                     <p class="card-text"><?php echo nl2br(htmlspecialchars($post['content'])); ?></p>
                                     <?php if ($post['image_path']): ?>
-                                        <img src="<?php echo htmlspecialchars($post['image_path']); ?>" class="img-fluid rounded" alt="Post image">
+                                        <img src="<?php echo htmlspecialchars($post['image_path']); ?>" class="w-50 img-fluid rounded" alt="Post image">
                                     <?php endif; ?>
                                 </div>
                                 <div class="card-footer d-flex justify-content-between align-items-center">
                                     <div class="likes-section">
                                         <button class="btn btn-sm <?php echo $post['user_liked'] ? 'btn-success' : 'btn-outline-success'; ?> like-button" data-post-id="<?php echo $post['id']; ?>">
                                             <i class="bi <?php echo $post['user_liked'] ? 'bi-heart-fill' : 'bi-heart'; ?>"></i>
-                                            <span class="likes-count"><?php echo $post['likes']; ?></span>
+                                            <span class="likes-count"><?php echo $post['likes'] ?? 0; ?></span>
                                         </button>
                                     </div>
                                 </div>
@@ -132,33 +148,29 @@ include_once 'includes/header.php';
             </div>
         </div>
 
-        <!-- Sidebar -->
         <div class="col-lg-4">
-            <!-- Community Stats -->
             <div class="card shadow-sm mb-4">
                 <div class="card-body">
                     <h5 class="card-title mb-3">Community Stats</h5>
                     <div class="d-flex justify-content-between mb-2">
                         <span>Total Members:</span>
-                        <span class="fw-bold"><!-- PHP: Echo total members --></span>
+                        <span class="fw-bold"></span>
                     </div>
                     <div class="d-flex justify-content-between mb-2">
                         <span>Posts Today:</span>
-                        <span class="fw-bold"><!-- PHP: Echo posts today --></span>
+                        <span class="fw-bold"></span>
                     </div>
                     <div class="d-flex justify-content-between">
                         <span>Active Discussions:</span>
-                        <span class="fw-bold"><!-- PHP: Echo active discussions --></span>
+                        <span class="fw-bold"></span>
                     </div>
                 </div>
             </div>
 
-            <!-- Popular Topics -->
             <div class="card shadow-sm mb-4">
                 <div class="card-body">
                     <h5 class="card-title mb-3">Popular Topics</h5>
                     <div class="popular-topics">
-                        <!-- PHP: Loop through popular topics -->
                         <span class="badge bg-success me-2 mb-2">#Farming</span>
                         <span class="badge bg-success me-2 mb-2">#Sustainability</span>
                         <span class="badge bg-success me-2 mb-2">#Innovation</span>
@@ -167,7 +179,6 @@ include_once 'includes/header.php';
                 </div>
             </div>
 
-            <!-- Community Guidelines -->
             <div class="card shadow-sm">
                 <div class="card-body">
                     <h5 class="card-title mb-3">Community Guidelines</h5>
@@ -227,16 +238,16 @@ document.addEventListener('DOMContentLoaded', function() {
     likeButtons.forEach(button => {
         button.addEventListener('click', async function(e) {
             e.preventDefault();
-            
+
             if (!<?php echo isset($_SESSION['user_id']) ? 'true' : 'false'; ?>) {
                 window.location.href = 'login.php';
                 return;
             }
-            
+
             const postId = this.dataset.postId;
             const likesCount = this.querySelector('.likes-count');
             const heartIcon = this.querySelector('.bi');
-            
+
             try {
                 const response = await fetch('includes/like_post.php', {
                     method: 'POST',
@@ -249,11 +260,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
 
                 const data = await response.json();
-                
+
                 if (data.success) {
                     // Update likes count
                     likesCount.textContent = data.likes;
-                    
+
                     // Toggle button appearance based on action
                     if (data.action === 'liked') {
                         this.classList.remove('btn-outline-success');

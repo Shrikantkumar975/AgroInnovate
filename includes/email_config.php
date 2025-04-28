@@ -12,48 +12,40 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
+use PHPMailer\PHPMailer\SMTP;
 
 /**
- * Send an email using PHPMailer
+ * Configure a PHPMailer instance with default settings
  * 
- * @param string $to Recipient email address
- * @param string $subject Email subject
- * @param string $message Email message body
- * @param string $from Sender email address (optional)
- * @return bool Whether the email was sent successfully
+ * @return PHPMailer Configured PHPMailer instance
  */
-function sendEmail($to, $subject, $message, $from = null) {
+function configureEmail() {
+    $mail = new PHPMailer(true);
+    
     try {
-        $mail = new PHPMailer(true);
-
         // Server settings
         $mail->isSMTP();
         $mail->Host = SMTP_HOST;
         $mail->SMTPAuth = true;
         $mail->Username = SMTP_USERNAME;
         $mail->Password = SMTP_PASSWORD;
-        $mail->SMTPSecure = 'tls';
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port = SMTP_PORT;
         $mail->CharSet = 'UTF-8';
-
-        // Recipients
-        $mail->setFrom($from ?: SMTP_FROM_EMAIL, SMTP_FROM_NAME);
-        $mail->addAddress($to);
-        if ($from) {
-            $mail->addReplyTo($from);
-        }
-
-        // Content
-        $mail->isHTML(false);
-        $mail->Subject = $subject;
-        $mail->Body = $message;
-
-        // Send email
-        $mail->send();
-        return true;
+        
+        // Enable debugging
+        $mail->SMTPDebug = 0; // Set to 2 for detailed debug output
+        $mail->Debugoutput = function($str, $level) {
+            error_log("SMTP Debug: $str");
+        };
+        
+        // Set default from address
+        $mail->setFrom(SMTP_FROM_EMAIL, SMTP_FROM_NAME);
+        
+        return $mail;
     } catch (Exception $e) {
-        error_log("Failed to send email to $to. Error: " . $mail->ErrorInfo);
-        return false;
+        error_log("Error configuring email: " . $e->getMessage());
+        return null;
     }
 }
 
@@ -73,37 +65,33 @@ function sendEmailSimple($to, $subject, $message) {
 }
 
 /**
- * Send email using SMTP class
+ * Send email using SMTP with PHPMailer
  * @param string $to Recipient email address
  * @param string $subject Email subject
  * @param string $message Email message (HTML)
  * @return bool Success status
  */
 function sendEmailSMTP($to, $subject, $message) {
-    $mail = new SMTP();
-    $mail->isSMTP();
-    $mail->setFrom(SMTP_FROM_EMAIL, SMTP_FROM_NAME);
-    $mail->addAddress($to);
-    $mail->isHTML(true);
-    $mail->subject = $subject;
-    $mail->body = $message;
-    
-    return $mail->send();
-}
+    try {
+        $mail = configureEmail();
+        if (!$mail) {
+            throw new Exception("Failed to configure email");
+        }
 
-// PHPMailer configuration function
-function configureMailer($mail) {
-    $mail->isSMTP();
-    $mail->Host = SMTP_HOST;
-    $mail->SMTPAuth = true;
-    $mail->Username = SMTP_USERNAME;
-    $mail->Password = SMTP_PASSWORD;
-    $mail->SMTPSecure = 'tls';
-    $mail->Port = SMTP_PORT;
-    $mail->setFrom(SMTP_FROM_EMAIL, SMTP_FROM_NAME);
-    
-    // Set UTF-8 encoding
-    $mail->CharSet = 'UTF-8';
-    
-    return $mail;
+        // Recipients
+        $mail->addAddress($to);
+        
+        // Content
+        $mail->isHTML(true);
+        $mail->Subject = $subject;
+        $mail->Body = $message;
+        
+        // Send the email
+        $result = $mail->send();
+        error_log("Email sent successfully to: " . $to);
+        return $result;
+    } catch (Exception $e) {
+        error_log("Email sending failed: " . $e->getMessage());
+        return false;
+    }
 } 

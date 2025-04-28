@@ -1,17 +1,23 @@
 <?php
 // Include necessary files
-include_once 'includes/db_connect.php';
-include_once 'includes/functions.php';
+require_once 'includes/db_connect.php';
+require_once 'includes/functions.php';
+session_start();
 
-// Set appropriate headers
+// Set content type to JSON
 header('Content-Type: application/json');
-header('Cache-Control: no-cache, no-store, must-revalidate');
-header('Pragma: no-cache');
-header('Expires: 0');
 
-// Get posts from the database
-$posts = getCommunityPosts(10);
+// Get pagination parameters
+$page = isset($_GET['page']) ? intval($_GET['page']) : 1;
+$limit = isset($_GET['limit']) ? intval($_GET['limit']) : 10;
 
-// Return as JSON
-echo json_encode($posts);
+// Calculate offset
+$offset = ($page - 1) * $limit;
+
+try {
+    $posts = getPosts($page, $limit);
+    echo json_encode(['success' => true, 'data' => $posts]);
+} catch (Exception $e) {
+    echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+}
 ?> 
