@@ -2,10 +2,10 @@
 // Email Configuration
 define('SMTP_HOST', 'smtp.gmail.com');
 define('SMTP_PORT', 587);
-define('SMTP_USERNAME', 'akashjasrotia6a@gmail.com');
-define('SMTP_PASSWORD', 'fwfk ebuw xqdu iqah');
+define('SMTP_USERNAME', 'shrikumar975@gmail.com');
+define('SMTP_PASSWORD', 'ruhw npwm koth rpua');
 define('SMTP_FROM_NAME', 'AgroInnovate');
-define('SMTP_FROM_EMAIL', 'akashjasrotia6a@gmail.com');
+define('SMTP_FROM_EMAIL', 'shrikumar975@gmail.com');
 
 // Require Composer's autoloader
 require_once __DIR__ . '/../vendor/autoload.php';

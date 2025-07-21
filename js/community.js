@@ -20,10 +20,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
-    
-    // Function to load posts
     function loadPosts(page, append = false) {
-        // Show loading indicator
         const loadingIndicator = document.getElementById('loading-indicator');
         if (loadingIndicator) loadingIndicator.style.display = 'block';
         
