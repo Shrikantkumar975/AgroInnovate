@@ -1,9 +1,9 @@
 <?php
 // Database configuration
-$db_host = 'localhost';
-$db_name = 'agroinnovate';
-$db_user = 'root';
-$db_pass = '';
+$db_host = getenv('DB_HOST') !== false ? getenv('DB_HOST') : 'localhost';
+$db_name = getenv('DB_NAME') !== false ? getenv('DB_NAME') : 'agroinnovate';
+$db_user = getenv('DB_USER') !== false ? getenv('DB_USER') : 'root';
+$db_pass = getenv('DB_PASS') !== false ? getenv('DB_PASS') : '';
 
 try {
     // First try to connect without database to check if it exists

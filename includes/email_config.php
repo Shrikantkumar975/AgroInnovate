@@ -1,11 +1,14 @@
 <?php
-// Email Configuration
-define('SMTP_HOST', 'smtp.gmail.com');
-define('SMTP_PORT', 587);
-define('SMTP_USERNAME', 'akaxmovie@gmail.com');
-define('SMTP_PASSWORD', 'pgbznlemckbrdofy');
-define('SMTP_FROM_NAME', 'AgroInnovate');
-define('SMTP_FROM_EMAIL', 'akaxmovie@gmail.com');
+// Load .env configuration (ensures getenv vars are available)
+require_once __DIR__ . '/config.php';
+
+// Email Configuration (read from environment; set in .env)
+define('SMTP_HOST', getenv('SMTP_HOST') !== false ? getenv('SMTP_HOST') : 'smtp.gmail.com');
+define('SMTP_PORT', getenv('SMTP_PORT') !== false ? (int)getenv('SMTP_PORT') : 587);
+define('SMTP_USERNAME', getenv('SMTP_USERNAME') !== false ? getenv('SMTP_USERNAME') : '');
+define('SMTP_PASSWORD', getenv('SMTP_PASSWORD') !== false ? getenv('SMTP_PASSWORD') : '');
+define('SMTP_FROM_NAME', getenv('SMTP_FROM_NAME') !== false ? getenv('SMTP_FROM_NAME') : 'AgroInnovate');
+define('SMTP_FROM_EMAIL', getenv('SMTP_FROM_EMAIL') !== false ? getenv('SMTP_FROM_EMAIL') : '');
 
 // Require Composer's autoloader
 require_once __DIR__ . '/../vendor/autoload.php';
@@ -34,7 +37,7 @@ function configureEmail() {
         $mail->CharSet = 'UTF-8';
         
         // Enable debugging
-        $mail->SMTPDebug = 2; // Set to 2 for detailed debug output
+        $mail->SMTPDebug = 0; // Set to 2 for detailed debug output
         $mail->Debugoutput = function($str, $level) {
             error_log("SMTP Debug: $str");
         };

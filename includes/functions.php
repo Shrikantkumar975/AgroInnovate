@@ -838,39 +838,9 @@ function deleteData($table, $where, $params) {
  */
 function sendEmail($to, $subject, $message) {
     try {
-        // Create a new PHPMailer instance
-        $mail = new PHPMailer(true);
-
-        // Server settings
-        $mail->isSMTP();
-        $mail->Host = 'smtp.gmail.com';
-        $mail->SMTPAuth = true;
-        $mail->Username = 'shrikumar975@gmail.com';
-        $mail->Password = 'bjzemfytavddvdoa';
-        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-        $mail->Port = 587;
-        $mail->CharSet = 'UTF-8';
-        
-        // Enable debugging
-        $mail->SMTPDebug = 2;
-        $mail->Debugoutput = function($str, $level) {
-            error_log("SMTP Debug: $str");
-        };
-
-        // Recipients
-        $mail->setFrom('akaxmovie@gmail.com', 'AgroInnovate');
-        $mail->addAddress($to);
-
-        // Content
-        $mail->isHTML(true);
-        $mail->Subject = $subject;
-        $mail->Body = $message;
-        $mail->AltBody = strip_tags($message);
-
-        // Send email
-        $result = $mail->send();
-        error_log("Email sent successfully to: $to");
-        return $result;
+        // Use centralized SMTP sender that reads all settings from environment
+        require_once __DIR__ . '/email_config.php';
+        return sendEmailSMTP($to, $subject, $message);
     } catch (Exception $e) {
         error_log("Failed to send email to $to. Error: " . $e->getMessage());
         return false;
