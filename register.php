@@ -92,9 +92,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $token = $emailValidator->generateVerificationToken();
             $expires = date('Y-m-d H:i:s', strtotime('+24 hours'));
             
-            // Store verification token
-            $stmt = $conn->prepare("INSERT INTO email_verifications (user_id, token, expires_at) VALUES (?, ?, ?)");
-            $stmt->bind_param("iss", $userId, $token, $expires);
+            // Store verification token (singular table, no expiry column)
+            $stmt = $conn->prepare("INSERT INTO email_verification (user_id, token) VALUES (?, ?)");
+            $stmt->bind_param("is", $userId, $token);
             $stmt->execute();
             
             // Send verification email

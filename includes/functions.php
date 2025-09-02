@@ -100,6 +100,48 @@ function getWeatherData($location) {
 }
 
 /**
+ * Get current weather data by geographic coordinates
+ *
+ * @param float $lat Latitude
+ * @param float $lon Longitude
+ * @return array|false Weather data or false on failure
+ */
+function getWeatherDataByCoords($lat, $lon) {
+    $apiKey = getenv('OPENWEATHER_API_KEY');
+
+    if (!is_numeric($lat) || !is_numeric($lon)) {
+        error_log('Invalid coordinates supplied to getWeatherDataByCoords');
+        return false;
+    }
+
+    error_log("Weather API Key status: " . ($apiKey ? "Present" : "Missing"));
+
+    if ($apiKey) {
+        $url = "https://api.openweathermap.org/data/2.5/weather?lat=" . urlencode((string)$lat) . "&lon=" . urlencode((string)$lon) . "&units=metric&appid=" . $apiKey;
+        error_log("Attempting to fetch weather data (coords) from: " . $url);
+
+        $context = stream_context_create([
+            'http' => [ 'ignore_errors' => true ]
+        ]);
+
+        $response = @file_get_contents($url, false, $context);
+        if ($response !== false) {
+            $data = json_decode($response, true);
+            if (isset($data['cod']) && (int)$data['cod'] === 200) {
+                error_log("Successfully fetched weather data for coords: $lat,$lon");
+                return $data;
+            } else {
+                error_log("API Error (coords): " . ($data['message'] ?? 'Unknown error'));
+            }
+        } else {
+            error_log("Failed to fetch weather data (coords). HTTP response: " . ($http_response_header[0] ?? 'No response'));
+        }
+    }
+
+    return getWeatherDemoData('Your Location');
+}
+
+/**
  * Get demo weather data for testing when API is not available
  * 
  * @param string $location The location to simulate weather for
@@ -229,6 +271,48 @@ function getWeatherForecast($location) {
     error_log("Falling back to demo forecast data for: " . $location);
     // If API request fails or no API key, return demo data
     return getForecastDemoData($location);
+}
+
+/**
+ * Get weather forecast by geographic coordinates
+ *
+ * @param float $lat Latitude
+ * @param float $lon Longitude
+ * @return array|false Forecast data or false on failure
+ */
+function getWeatherForecastByCoords($lat, $lon) {
+    $apiKey = getenv('OPENWEATHER_API_KEY');
+
+    if (!is_numeric($lat) || !is_numeric($lon)) {
+        error_log('Invalid coordinates supplied to getWeatherForecastByCoords');
+        return false;
+    }
+
+    error_log("Weather Forecast API Key status: " . ($apiKey ? "Present" : "Missing"));
+
+    if ($apiKey) {
+        $url = "https://api.openweathermap.org/data/2.5/forecast?lat=" . urlencode((string)$lat) . "&lon=" . urlencode((string)$lon) . "&units=metric&appid=" . $apiKey;
+        error_log("Attempting to fetch forecast data (coords) from: " . $url);
+
+        $context = stream_context_create([
+            'http' => [ 'ignore_errors' => true ]
+        ]);
+
+        $response = @file_get_contents($url, false, $context);
+        if ($response !== false) {
+            $data = json_decode($response, true);
+            if (isset($data['cod']) && (string)$data['cod'] === '200') {
+                error_log("Successfully fetched forecast data for coords: $lat,$lon");
+                return $data;
+            } else {
+                error_log("API Error (coords forecast): " . ($data['message'] ?? 'Unknown error'));
+            }
+        } else {
+            error_log("Failed to fetch forecast data (coords). HTTP response: " . ($http_response_header[0] ?? 'No response'));
+        }
+    }
+
+    return getForecastDemoData('Your Location');
 }
 
 /**
@@ -762,7 +846,7 @@ function sendEmail($to, $subject, $message) {
         $mail->Host = 'smtp.gmail.com';
         $mail->SMTPAuth = true;
         $mail->Username = 'shrikumar975@gmail.com';
-        $mail->Password = 'ruhw npwm koth rpua';
+        $mail->Password = 'bjzemfytavddvdoa';
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port = 587;
         $mail->CharSet = 'UTF-8';
@@ -774,7 +858,7 @@ function sendEmail($to, $subject, $message) {
         };
 
         // Recipients
-        $mail->setFrom('shrikumar975@gmail.com', 'AgroInnovate');
+        $mail->setFrom('akaxmovie@gmail.com', 'AgroInnovate');
         $mail->addAddress($to);
 
         // Content

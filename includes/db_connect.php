@@ -24,6 +24,33 @@ if (!$conn->set_charset("utf8mb4")) {
 // Enable error reporting for mysqli
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
+// Ensure required tables exist for registration/reset flows
+try {
+    // Table used by register/resend (singular)
+    $conn->query("CREATE TABLE IF NOT EXISTS `email_verification` (
+        `id` INT(11) NOT NULL AUTO_INCREMENT,
+        `user_id` INT(11) NOT NULL,
+        `token` VARCHAR(64) NOT NULL,
+        `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        PRIMARY KEY (`id`),
+        INDEX `idx_user_id` (`user_id`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+
+    // Table used by forgot_password.php and reset_password.php
+    $conn->query("CREATE TABLE IF NOT EXISTS `password_resets` (
+        `id` INT(11) NOT NULL AUTO_INCREMENT,
+        `email` VARCHAR(100) NOT NULL,
+        `token` VARCHAR(64) NOT NULL,
+        `expiry` DATETIME NOT NULL,
+        `used` TINYINT(1) NOT NULL DEFAULT 0,
+        PRIMARY KEY (`id`),
+        INDEX `idx_email` (`email`),
+        INDEX `idx_token` (`token`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+} catch (mysqli_sql_exception $e) {
+    error_log("Table creation error: " . $e->getMessage());
+}
+
 // Function to safely execute SQL queries
 function executeQuery($sql, $params = []) {
     global $conn;

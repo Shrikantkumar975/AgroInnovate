@@ -1,15 +1,28 @@
 <?php
+// Ensure clean JSON output
+ini_set('display_errors', '0');
+if (ob_get_level() > 0) { ob_end_clean(); }
+ob_start();
+
 // Include necessary files
 require_once '../includes/functions.php';
 
 // Set content type to JSON
-header('Content-Type: application/json');
+header('Content-Type: application/json; charset=UTF-8');
 
-// Get location parameter
-$location = isset($_GET['location']) ? sanitizeInput($_GET['location']) : 'Delhi';
+// Determine request mode: coordinates or location name
+$lat = isset($_GET['lat']) ? $_GET['lat'] : null;
+$lon = isset($_GET['lon']) ? $_GET['lon'] : null;
+$location = isset($_GET['location']) ? sanitizeInput($_GET['location']) : null;
 
-// Get weather data from API
-$weatherData = getWeatherData($location);
+if ($lat !== null && $lon !== null) {
+    $weatherData = getWeatherDataByCoords($lat, $lon);
+    $resolvedLocation = isset($weatherData['name']) ? $weatherData['name'] : 'Your Location';
+} else {
+    $location = $location ?: 'Delhi';
+    $weatherData = getWeatherData($location);
+    $resolvedLocation = $location;
+}
 
 // Check if weather data retrieval was successful
 if ($weatherData === false) {
@@ -24,7 +37,7 @@ if ($weatherData === false) {
 // Format the response
 $response = [
     'success' => true,
-    'location' => $location,
+    'location' => $resolvedLocation,
     'country' => 'India',
     'current' => [
         'temp' => isset($weatherData['main']['temp']) ? round($weatherData['main']['temp']) : null,
@@ -40,8 +53,12 @@ $response = [
     ]
 ];
 
-// Get forecast data
-$forecastData = getWeatherForecast($location);
+// Get forecast data matching the mode
+if ($lat !== null && $lon !== null) {
+    $forecastData = getWeatherForecastByCoords($lat, $lon);
+} else {
+    $forecastData = getWeatherForecast($resolvedLocation);
+}
 
 if ($forecastData !== false && isset($forecastData['list'])) {
     $forecast = [];
@@ -79,6 +96,9 @@ if ($forecastData !== false && isset($forecastData['list'])) {
     $response['forecast'] = $forecast;
 }
 
-// Return the response
-echo json_encode($response);
+// Return the response (strip any stray output)
+$json = json_encode($response);
+ob_clean();
+echo $json;
+exit;
 ?>

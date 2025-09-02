@@ -14,14 +14,35 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Set up location search form
     setupLocationSearch();
+
+    // Set up detect location button
+    setupDetectLocation();
 });
 
 /**
  * Initializes weather functionality
  */
 function initWeather() {
-    // Load weather data for default location
+    // Try first-visit geolocation with caching
+    const saved = safeParse(localStorage.getItem('weatherLocation'));
+    if (saved && saved.lat && saved.lon) {
+        loadWeatherDataByCoords(saved.lat, saved.lon);
+        return;
+    }
+
+    // Fallback to default city while we attempt geolocation
     loadWeatherData(currentLocation);
+    tryGeolocation(
+        (pos) => {
+            const { latitude, longitude } = pos.coords;
+            localStorage.setItem('weatherLocation', JSON.stringify({ lat: latitude, lon: longitude }));
+            loadWeatherDataByCoords(latitude, longitude);
+        },
+        () => {
+            // keep default
+        },
+        8000
+    );
     
     // Set up weather tabs if they exist
     const weatherTabs = document.querySelectorAll('.weather-tab');
@@ -45,6 +66,29 @@ function initWeather() {
 }
 
 /**
+ * Sets up the detect location button
+ */
+function setupDetectLocation() {
+    const btn = document.getElementById('detect-location');
+    if (!btn) return;
+    btn.addEventListener('click', function() {
+        btn.disabled = true;
+        tryGeolocation(
+            (pos) => {
+                const { latitude, longitude } = pos.coords;
+                localStorage.setItem('weatherLocation', JSON.stringify({ lat: latitude, lon: longitude }));
+                loadWeatherDataByCoords(latitude, longitude);
+                btn.disabled = false;
+            },
+            () => {
+                btn.disabled = false;
+            },
+            8000
+        );
+    });
+}
+
+/**
  * Sets up location search form
  */
 function setupLocationSearch() {
@@ -61,6 +105,68 @@ function setupLocationSearch() {
         loadWeatherData(currentLocation);
     });
 }
+
+/**
+ * Loads weather data by coordinates from API
+ * @param {number} lat
+ * @param {number} lon
+ */
+function loadWeatherDataByCoords(lat, lon) {
+    const weatherContainer = document.getElementById('weather-data');
+    const forecastContainer = document.getElementById('forecast-data');
+    if (!weatherContainer) return;
+
+    weatherContainer.innerHTML = `
+        <div class="text-center my-5">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2">Loading weather data...</p>
+        </div>
+    `;
+    if (forecastContainer) forecastContainer.innerHTML = '';
+
+    fetch(`/api/weather.php?lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lon)}`)
+        .then(async r => {
+            const text = await r.text();
+            if (!r.ok) throw new Error(`Weather data request failed (${r.status})`);
+            try { return JSON.parse(text); } catch { throw new Error('Invalid JSON from server. First bytes: ' + text.slice(0,120)); }
+        })
+        .then(data => {
+            if (!data.success) throw new Error(data.error || 'Failed to retrieve weather data');
+            weatherData = data;
+            displayWeatherData();
+            displayForecastData();
+        })
+        .catch(error => {
+            weatherContainer.innerHTML = `
+                <div class="alert alert-danger" role="alert">
+                    <i data-feather="alert-circle"></i>
+                    ${error.message || 'An error occurred while fetching weather data. Please try again later.'}
+                </div>
+            `;
+            if (typeof feather !== 'undefined') feather.replace();
+        });
+}
+
+/**
+ * Attempt geolocation with timeout and graceful fallback
+ */
+function tryGeolocation(onSuccess, onError, timeoutMs = 8000) {
+    if (!('geolocation' in navigator)) {
+        onError && onError();
+        return;
+    }
+    let done = false;
+    const timer = setTimeout(() => { if (done) return; done = true; onError && onError(); }, timeoutMs);
+    navigator.geolocation.getCurrentPosition(
+        (pos) => { if (done) return; done = true; clearTimeout(timer); onSuccess(pos); },
+        (err) => { if (done) return; done = true; clearTimeout(timer); onError && onError(err); },
+        { enableHighAccuracy: false, timeout: timeoutMs, maximumAge: 300000 }
+    );
+}
+
+function safeParse(str) { try { return JSON.parse(str); } catch { return null; } }
 
 /**
  * Loads weather data from API
@@ -89,11 +195,16 @@ function loadWeatherData(location) {
     
     // Fetch weather data from API
     fetch(`/api/weather.php?location=${encodeURIComponent(location)}`)
-        .then(response => {
+        .then(async response => {
+            const text = await response.text();
             if (!response.ok) {
-                throw new Error('Weather data request failed');
+                throw new Error(`Weather data request failed (${response.status})`);
             }
-            return response.json();
+            try {
+                return JSON.parse(text);
+            } catch (e) {
+                throw new Error('Invalid JSON from server. First bytes: ' + text.slice(0, 120));
+            }
         })
         .then(data => {
             if (!data.success) {
