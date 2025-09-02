@@ -2,10 +2,10 @@
 // Email Configuration
 define('SMTP_HOST', 'smtp.gmail.com');
 define('SMTP_PORT', 587);
-define('SMTP_USERNAME', 'shrikumar975@gmail.com');
-define('SMTP_PASSWORD', 'ruhw npwm koth rpua');
+define('SMTP_USERNAME', 'akaxmovie@gmail.com');
+define('SMTP_PASSWORD', 'pgbznlemckbrdofy');
 define('SMTP_FROM_NAME', 'AgroInnovate');
-define('SMTP_FROM_EMAIL', 'shrikumar975@gmail.com');
+define('SMTP_FROM_EMAIL', 'akaxmovie@gmail.com');
 
 // Require Composer's autoloader
 require_once __DIR__ . '/../vendor/autoload.php';
@@ -34,7 +34,7 @@ function configureEmail() {
         $mail->CharSet = 'UTF-8';
         
         // Enable debugging
-        $mail->SMTPDebug = 0; // Set to 2 for detailed debug output
+        $mail->SMTPDebug = 2; // Set to 2 for detailed debug output
         $mail->Debugoutput = function($str, $level) {
             error_log("SMTP Debug: $str");
         };

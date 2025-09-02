@@ -76,9 +76,7 @@ require_once 'includes/header.php';
                                         </span>
                                     </button>
                                 </div>
-                                <small class="form-text text-muted" data-en="Examples: Mumbai, Delhi, Chennai, Kolkata, Bangalore" data-hi="उदाहरण: मुंबई, दिल्ली, चेन्नई, कोलकाता, बैंगलोर">
-                                    <?php echo ($_SESSION['language'] == 'en') ? 'Examples: Mumbai, Delhi, Chennai, Kolkata, Bangalore' : 'उदाहरण: मुंबई, दिल्ली, चेन्नई, कोलकाता, बैंगलोर'; ?>
-                                </small>
+                                
                             </form>
                         </div>
                     </div>
