@@ -117,6 +117,9 @@ if (isset($_SESSION['success_message'])) {
                                 <?php echo ($_SESSION['language'] == 'en') ? 'Search' : 'खोजें'; ?>
                             </span>
                         </button>
+                        <button type="button" id="detect-location" class="weather-search-btn ms-2" title="Use my location">
+                            <i data-feather="map-pin"></i>
+                        </button>
                     </form>
                 </div>
                 <div id="weather-data">
