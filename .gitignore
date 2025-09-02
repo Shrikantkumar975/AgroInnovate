@@ -1,0 +1,8 @@
+.env
+vendor/*
+uploads/*
+sessions/*
+*.log
+composer.lock
+agroinnovate_project.zip
+generated-icon.png
