@@ -761,8 +761,8 @@ function sendEmail($to, $subject, $message) {
         $mail->isSMTP();
         $mail->Host = 'smtp.gmail.com';
         $mail->SMTPAuth = true;
-        $mail->Username = 'akashjasrotia6a@gmail.com';
-        $mail->Password = 'fwfk ebuw xqdu iqah';
+        $mail->Username = 'shrikumar975@gmail.com';
+        $mail->Password = 'ruhw npwm koth rpua';
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port = 587;
         $mail->CharSet = 'UTF-8';
@@ -774,7 +774,7 @@ function sendEmail($to, $subject, $message) {
         };
 
         // Recipients
-        $mail->setFrom('akashjasrotia6a@gmail.com', 'AgroInnovate');
+        $mail->setFrom('shrikumar975@gmail.com', 'AgroInnovate');
         $mail->addAddress($to);
 
         // Content

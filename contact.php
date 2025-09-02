@@ -33,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         if ($saved) {
             // Send email notification to admin
-            $adminEmail = 'akashjasrotia6a@gmail.com'; // Admin email address
+            $adminEmail = 'shrikumar975@gmail.com'; // Admin email address
             $emailSubject = "New Contact Form Submission: $subject";
             $emailMessage = "New contact form submission received:\n\n";
             $emailMessage .= "Name: $name\n";
@@ -89,7 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 <i data-feather="mail"></i>
                                 <div class="contact-text">
                                     <h4>Email</h4>
-                                    <p>akashjasrotia6a@gmail.com</p>
+                                    <p>shrikumar975@gmail.com</p>
                                 </div>
                             </div>
                             
@@ -99,7 +99,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     <h4 data-en="Phone" data-hi="फ़ोन">
                                         <?php echo ($_SESSION['language'] == 'en') ? 'Phone' : 'फ़ोन'; ?>
                                     </h4>
-                                    <p>+91 7087792964</p>
+                                    <p>+91 9572225679</p>
                                 </div>
                             </div>
                         </div>
