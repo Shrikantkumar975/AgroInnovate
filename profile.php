@@ -118,214 +118,132 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_profile'])) {
         $errorMessage = implode('<br>', $errors);
     }
 }
+
+// ... (PHP logic stays, we only replace the HTML part below)
 ?>
+<?php include 'includes/header.php'; ?>
 
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Profile - AgroInnovate</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/styles.css">
-    <style>
-        .profile-container {
-            max-width: 800px;
-            margin: 50px auto;
-        }
-        
-        .profile-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 30px;
-        }
-        
-        .profile-avatar {
-            width: 100px;
-            height: 100px;
-            background-color: var(--primary-color);
-            border-radius: 50%;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2.5rem;
-            font-weight: 600;
-            margin-right: 20px;
-        }
-        
-        .profile-name h2 {
-            margin-bottom: 5px;
-        }
-        
-        .profile-email {
-            color: var(--gray-color);
-        }
-        
-        .profile-card {
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-            padding: 30px;
-            margin-bottom: 30px;
-        }
-        
-        .profile-card h3 {
-            margin-bottom: 20px;
-            position: relative;
-            padding-bottom: 10px;
-        }
-        
-        .profile-card h3::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 50px;
-            height: 3px;
-            background-color: var(--primary-color);
-        }
-        
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .password-requirements {
-            font-size: 0.875rem;
-            color: #6c757d;
-            margin-top: 0.25rem;
-        }
-    </style>
-</head>
-<body>
-    <?php include 'includes/header.php'; ?>
-    
-    <main>
-        <div class="container profile-container">
-            <div class="profile-header">
-                <div class="profile-avatar">
-                    <?php echo strtoupper(substr($userData['name'], 0, 1)); ?>
-                </div>
-                <div class="profile-name">
-                    <h2><?php echo htmlspecialchars($userData['name']); ?></h2>
-                    <div class="profile-email"><?php echo htmlspecialchars($userData['email']); ?></div>
-                    <!-- <div class="profile-joined">Joined: <?php
-                    //  echo date('F j, Y', strtotime($userData['created_at'])); 
-                     ?></div> -->
-                </div>
+<main>
+    <div class="container profile-container">
+        <div class="profile-header">
+            <div class="profile-header-avatar">
+                <?php echo strtoupper(substr($userData['name'], 0, 1)); ?>
             </div>
-            
-            <div class="profile-card">
-                <h3>Edit Profile</h3>
-                
-                <?php if (isset($_SESSION['success_msg'])): ?>
-                    <div class="alert alert-success"><?php echo $_SESSION['success_msg']; unset($_SESSION['success_msg']); ?></div>
-                <?php endif; ?>
-                
-                <?php if ($errorMessage): ?>
-                    <div class="alert alert-danger"><?php echo $errorMessage; ?></div>
-                <?php endif; ?>
-                
-                <form method="post" action="" id="profileForm">
-                    <div class="form-group">
-                        <label for="name">Full Name</label>
-                        <input type="text" class="form-control" id="name" name="name" value="<?php echo htmlspecialchars($userData['name']); ?>" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="email">Email Address</label>
-                        <input type="email" class="form-control" id="email" name="email" value="<?php echo htmlspecialchars($userData['email']); ?>" required>
-                    </div>
-                    
-                    <h4 class="mt-4 mb-3">Change Password (optional)</h4>
-                    
-                    <div class="form-group">
-                        <label for="current_password">Current Password</label>
-                        <input type="password" class="form-control" id="current_password" name="current_password">
-                        <small class="text-muted">Required to change password</small>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="new_password">New Password</label>
-                        <input type="password" class="form-control" id="new_password" name="new_password">
-                        <div class="password-requirements">
-                            Password must contain:
-                            <ul>
-                                <li>At least 8 characters</li>
-                                <li>At least one uppercase letter</li>
-                                <li>At least one lowercase letter</li>
-                                <li>At least one number</li>
-                                <li>At least one special character</li>
-                            </ul>
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="confirm_password">Confirm New Password</label>
-                        <input type="password" class="form-control" id="confirm_password" name="confirm_password">
-                    </div>
-                    
-                    <button type="submit" name="update_profile" class="btn btn-primary">Update Profile</button>
-                </form>
+            <div class="profile-name">
+                <h2><?php echo htmlspecialchars($userData['name']); ?></h2>
+                <div class="profile-email"><?php echo htmlspecialchars($userData['email']); ?></div>
             </div>
         </div>
-    </main>
-    
-    <?php include 'includes/footer.php'; ?>
+        
+        <div class="profile-card">
+            <h3>Edit Profile</h3>
+            
+            <?php if (isset($_SESSION['success_msg'])): ?>
+                <div class="alert alert-success"><?php echo $_SESSION['success_msg']; unset($_SESSION['success_msg']); ?></div>
+            <?php endif; ?>
+            
+            <?php if ($errorMessage): ?>
+                <div class="alert alert-danger"><?php echo $errorMessage; ?></div>
+            <?php endif; ?>
+            
+            <form method="post" action="" id="profileForm">
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <input type="text" class="form-control" id="name" name="name" value="<?php echo htmlspecialchars($userData['name']); ?>" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" class="form-control" id="email" name="email" value="<?php echo htmlspecialchars($userData['email']); ?>" required>
+                </div>
+                
+                <h4 class="mt-4 mb-3">Change Password (optional)</h4>
+                
+                <div class="form-group">
+                    <label for="current_password">Current Password</label>
+                    <input type="password" class="form-control" id="current_password" name="current_password">
+                    <small class="text-muted">Required to change password</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="new_password">New Password</label>
+                    <input type="password" class="form-control" id="new_password" name="new_password">
+                    <div class="password-requirements">
+                        Password must contain:
+                        <ul>
+                            <li>At least 8 characters</li>
+                            <li>At least one uppercase letter</li>
+                            <li>At least one lowercase letter</li>
+                            <li>At least one number</li>
+                            <li>At least one special character</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="confirm_password">Confirm New Password</label>
+                    <input type="password" class="form-control" id="confirm_password" name="confirm_password">
+                </div>
+                
+                <button type="submit" name="update_profile" class="btn btn-primary">Update Profile</button>
+            </form>
+        </div>
+    </div>
+</main>
 
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const form = document.getElementById('profileForm');
-        const currentPassword = document.getElementById('current_password');
-        const newPassword = document.getElementById('new_password');
-        const confirmPassword = document.getElementById('confirm_password');
+<?php include 'includes/footer.php'; ?>
 
-        form.addEventListener('submit', function(e) {
-            // Only validate if any password field is filled
-            if (currentPassword.value || newPassword.value || confirmPassword.value) {
-                const errors = [];
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('profileForm');
+    const currentPassword = document.getElementById('current_password');
+    const newPassword = document.getElementById('new_password');
+    const confirmPassword = document.getElementById('confirm_password');
 
-                // Check if current password is provided
-                if (!currentPassword.value) {
-                    errors.push('Current password is required to change password');
+    form.addEventListener('submit', function(e) {
+        // Only validate if any password field is filled
+        if (currentPassword.value || newPassword.value || confirmPassword.value) {
+            const errors = [];
+
+            // Check if current password is provided
+            if (!currentPassword.value) {
+                errors.push('Current password is required to change password');
+            }
+
+            // Check if new password is provided
+            if (!newPassword.value) {
+                errors.push('New password is required');
+            }
+
+            // Check if confirmation matches
+            if (newPassword.value !== confirmPassword.value) {
+                errors.push('New password and confirmation do not match');
+            }
+
+            // Validate password strength
+            if (newPassword.value) {
+                if (newPassword.value.length < 8) {
+                    errors.push('Password must be at least 8 characters long');
                 }
-
-                // Check if new password is provided
-                if (!newPassword.value) {
-                    errors.push('New password is required');
+                if (!/[A-Z]/.test(newPassword.value)) {
+                    errors.push('Password must contain at least one uppercase letter');
                 }
-
-                // Check if confirmation matches
-                if (newPassword.value !== confirmPassword.value) {
-                    errors.push('New password and confirmation do not match');
+                if (!/[a-z]/.test(newPassword.value)) {
+                    errors.push('Password must contain at least one lowercase letter');
                 }
-
-                // Validate password strength
-                if (newPassword.value) {
-                    if (newPassword.value.length < 8) {
-                        errors.push('Password must be at least 8 characters long');
-                    }
-                    if (!/[A-Z]/.test(newPassword.value)) {
-                        errors.push('Password must contain at least one uppercase letter');
-                    }
-                    if (!/[a-z]/.test(newPassword.value)) {
-                        errors.push('Password must contain at least one lowercase letter');
-                    }
-                    if (!/[0-9]/.test(newPassword.value)) {
-                        errors.push('Password must contain at least one number');
-                    }
-                    if (!/[^A-Za-z0-9]/.test(newPassword.value)) {
-                        errors.push('Password must contain at least one special character');
-                    }
+                if (!/[0-9]/.test(newPassword.value)) {
+                    errors.push('Password must contain at least one number');
                 }
-
-                if (errors.length > 0) {
-                    e.preventDefault();
-                    alert(errors.join('\n'));
+                if (!/[^A-Za-z0-9]/.test(newPassword.value)) {
+                    errors.push('Password must contain at least one special character');
                 }
             }
-        });
+
+            if (errors.length > 0) {
+                e.preventDefault();
+                alert(errors.join('\n'));
+            }
+        }
     });
-    </script>
-</body>
-</html> 
+});
+</script> 
