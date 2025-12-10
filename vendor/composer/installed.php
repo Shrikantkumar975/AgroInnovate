@@ -3,7 +3,7 @@
         'name' => 'agroinnovate/website',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => '6b1d3ae6f40f4a5585c3cb12aa1a030e0956a6bb',
+        'reference' => '4059ffd386300eef5683e869813f2869f3f2f4c7',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -13,7 +13,7 @@
         'agroinnovate/website' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => '6b1d3ae6f40f4a5585c3cb12aa1a030e0956a6bb',
+            'reference' => '4059ffd386300eef5683e869813f2869f3f2f4c7',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

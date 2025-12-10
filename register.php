@@ -43,12 +43,18 @@ $t = $content[$lang];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = sanitizeInput($_POST['name']);
+    $phone = sanitizeInput($_POST['phone']);
     $email = sanitizeInput($_POST['email']);
     $password = $_POST['password'];
     $confirm_password = $_POST['confirm_password'];
     
     $errors = [];
     
+    // Validate phone
+    if (!preg_match('/^[0-9]{10}$/', $phone)) {
+        $errors[] = "Phone number must be 10 digits";
+    }
+
     // Validate email
     $emailValidator = new EmailValidator($email);
     $emailValidation = $emailValidator->validate();
@@ -82,9 +88,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $conn->begin_transaction();
         
         try {
-            // Insert user
-            $stmt = $conn->prepare("INSERT INTO users (name, email, password, email_verified) VALUES (?, ?, ?, 0)");
-            $stmt->bind_param("sss", $name, $email, $hashed_password);
+            // Insert user - Changed email_verified to is_verified and added phone
+            $stmt = $conn->prepare("INSERT INTO users (name, phone, email, password, is_verified) VALUES (?, ?, ?, ?, 0)");
+            $stmt->bind_param("ssss", $name, $phone, $email, $hashed_password);
             $stmt->execute();
             $userId = $conn->insert_id;
             
@@ -148,6 +154,12 @@ include_once 'includes/header.php';
                             <input type="text" class="form-control" id="name" name="name" 
                                    value="<?php echo isset($_SESSION['form_data']['name']) ? $_SESSION['form_data']['name'] : ''; ?>" 
                                    required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="phone" class="form-label" data-lang-en="Phone Number" data-lang-hi="फ़ोन नंबर">Phone Number</label>
+                            <input type="tel" class="form-control" id="phone" name="phone" 
+                                   value="<?php echo isset($_SESSION['form_data']['phone']) ? $_SESSION['form_data']['phone'] : ''; ?>" 
+                                   required pattern="[0-9]{10}">
                         </div>
                         <div class="mb-3">
                             <label for="email" class="form-label" data-lang-en="Email" data-lang-hi="ईमेल"><?php echo $t['email_label']; ?></label>

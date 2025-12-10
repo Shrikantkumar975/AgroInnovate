@@ -11,7 +11,13 @@ define('SMTP_FROM_NAME', getenv('SMTP_FROM_NAME') !== false ? getenv('SMTP_FROM_
 define('SMTP_FROM_EMAIL', getenv('SMTP_FROM_EMAIL') !== false ? getenv('SMTP_FROM_EMAIL') : '');
 
 // Require Composer's autoloader
-require_once __DIR__ . '/../vendor/autoload.php';
+$autoloadPath = __DIR__ . '/../vendor/autoload.php';
+if (!file_exists($autoloadPath)) {
+    echo "CRITICAL: Autoload file not found at $autoloadPath\n";
+} else {
+    echo "Autoload found at $autoloadPath\n";
+}
+require_once $autoloadPath;
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
@@ -47,7 +53,7 @@ function configureEmail() {
         
         return $mail;
     } catch (Exception $e) {
-        error_log("Error configuring email: " . $e->getMessage());
+        echo "Error configuring email: " . $e->getMessage() . "\n";
         return null;
     }
 }
