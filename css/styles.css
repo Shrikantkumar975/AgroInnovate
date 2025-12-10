@@ -1204,5 +1204,17 @@ main {
 .password-requirements {
     font-size: 0.875rem;
     color: #6c757d;
-    margin-top: 0.25rem;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    /* Subtle border for definition */
+}
+
+.feature-box:hover,
+.story-card:hover,
+.resource-card:hover,
+.weather-card:hover,
+.profile-card:hover {
+    transform: translateY(-10px);
+    /* Significant lift */
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    /* Deep shadow */
 }

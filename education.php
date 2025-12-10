@@ -20,7 +20,7 @@ include_once 'includes/header.php';
 
 <!-- Page Header -->
 <section class="py-5 bg-success text-white">
-    <div class="container">
+    <div class="container" data-aos="fade-up">
         <h1 data-en="Educational Resources" data-hi="शैक्षिक संसाधन">
             <?php echo ($_SESSION['language'] == 'en') ? 'Educational Resources' : 'शैक्षिक संसाधन'; ?>
         </h1>

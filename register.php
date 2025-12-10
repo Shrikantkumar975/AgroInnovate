@@ -133,7 +133,7 @@ include_once 'includes/header.php';
 
 <div class="container mt-5">
     <div class="row justify-content-center">
-        <div class="col-md-6">
+        <div class="col-md-6" data-aos="zoom-in">
             <div class="card">
                 <div class="card-header bg-success text-white">
                     <h4 class="mb-0" data-lang-en="Register" data-lang-hi="पंजीकरण"><?php echo $t['title']; ?></h4>

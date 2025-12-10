@@ -4,7 +4,7 @@ include_once 'includes/header.php';
 ?>
 
 <!-- Page Header -->
-<section class="py-5 bg-success text-white">
+<section class="py-5 bg-success text-white" data-aos="fade-down">
     <div class="container">
         <h1>About AgroInnovate</h1>
         <p class="lead">Bridging the gap between technology and agriculture for Indian farmers</p>
@@ -12,7 +12,7 @@ include_once 'includes/header.php';
 </section>
 
 <!-- About Section -->
-<section class="py-5">
+<section class="py-5" data-aos="fade-up">
     <div class="container">
         <div class="row align-items-center mb-5">
             <div class="col-lg-6 mb-4 mb-lg-0">

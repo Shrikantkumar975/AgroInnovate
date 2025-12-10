@@ -73,7 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <?php include 'includes/header.php'; ?>
     
     <main>
-        <section class="contact-section">
+        <section class="contact-section" data-aos="fade-up">
             <div class="container">
                 <div class="row">
                     <div class="col-md-6">

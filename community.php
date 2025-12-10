@@ -79,7 +79,7 @@ $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
 include_once 'includes/header.php';
 ?>
 
-<div class="container py-5">
+<div class="container py-5" data-aos="fade-up">
     <div class="row">
         <div class="col-lg-8">
             <div class="card shadow-sm mb-4">

@@ -16,40 +16,15 @@ if (!isset($_SESSION['user_id'])) {
 require_once 'includes/header.php';
 ?>
 
-<style>
-.weather-section {
-    position: relative;
-    padding: 60px 0;
-    color: white;
-    background-color: #1B8A4C;
-}
-
-.weather-content {
-    position: relative;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 20px;
-}
-
-.weather-title {
-    font-size: 2.5rem;
-    margin-bottom: 1rem;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-}
-
-.weather-subtitle {
-    font-size: 1.2rem;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
-    opacity: 0.9;
-}
-
-</style>
-
-<section class="weather-section">
-    <!-- Content -->
-    <div class="weather-content">
-        <h1 class="weather-title">Weather Forecasts</h1>
-        <p class="weather-subtitle">Real-time weather data to help you plan your farming activities</p>
+<!-- Page Header -->
+<section class="py-5 bg-success text-white">
+    <div class="container" data-aos="fade-up">
+        <h1 class="mb-3" data-en="Weather Forecasts" data-hi="मौसम पूर्वानुमान">
+            <?php echo ($_SESSION['language'] == 'en') ? 'Weather Forecasts' : 'मौसम पूर्वानुमान'; ?>
+        </h1>
+        <p class="lead" data-en="Real-time weather data to help you plan your farming activities" data-hi="आपकी खेती की गतिविधियों की योजना बनाने में मदद करने के लिए वास्तविक समय का मौसम डेटा">
+            <?php echo ($_SESSION['language'] == 'en') ? 'Real-time weather data to help you plan your farming activities' : 'आपकी खेती की गतिविधियों की योजना बनाने में मदद करने के लिए वास्तविक समय का मौसम डेटा'; ?>
+        </p>
     </div>
 </section>
 
@@ -160,7 +135,7 @@ require_once 'includes/header.php';
 
 <!-- Forecast Section -->
 <section class="py-3">
-    <div class="container">
+    <div class="container" data-aos="fade-up">
         <h2 class="mb-4" data-en="5-Day Forecast" data-hi="5-दिन का पूर्वानुमान">
             <?php echo ($_SESSION['language'] == 'en') ? '5-Day Forecast' : '5-दिन का पूर्वानुमान'; ?>
         </h2>

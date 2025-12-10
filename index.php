@@ -19,7 +19,7 @@ if (isset($_SESSION['success_message'])) {
 <section class="hero-section">
     <div class="container">
         <div class="row align-items-center">
-            <div class="col-md-6 hero-content">
+            <div class="col-md-6 hero-content" data-aos="fade-right">
                 <h1 class="hero-title" data-lang-en="Empowering Indian Farmers" data-lang-hi="भारतीय किसानों को सशक्त बनाना">
                     <?php echo ($_SESSION['lang'] == 'en') ? 'Empowering Indian Farmers' : 'भारतीय किसानों को सशक्त बनाना'; ?>
                 </h1>
@@ -30,7 +30,7 @@ if (isset($_SESSION['success_message'])) {
                     <?php echo ($_SESSION['lang'] == 'en') ? 'Check Today\'s Weather' : 'आज का मौसम देखें'; ?>
                 </a>
             </div>
-            <div class="col-md-6 hero-image">
+            <div class="col-md-6 hero-image" data-aos="fade-left">
                 <img src="/assets/hero-banner.svg" alt="Indian farmer with modern technology" class="img-fluid">
             </div>
         </div>
@@ -40,13 +40,13 @@ if (isset($_SESSION['success_message'])) {
 <!-- Features Section -->
 <section class="features-section">
     <div class="container">
-        <div class="section-title">
+        <div class="section-title" data-aos="fade-up">
             <h2 data-en="Our Features" data-hi="हमारी विशेषताएं">
                 <?php echo ($_SESSION['language'] == 'en') ? 'Our Features' : 'हमारी विशेषताएं'; ?>
             </h2>
         </div>
         <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
                 <div class="feature-box">
                     <div class="feature-icon">
                         <i data-feather="cloud"></i>
@@ -62,7 +62,7 @@ if (isset($_SESSION['success_message'])) {
                     </a>
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
                 <div class="feature-box">
                     <div class="feature-icon">
                         <i data-feather="trending-up"></i>
@@ -78,7 +78,7 @@ if (isset($_SESSION['success_message'])) {
                     </a>
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
                 <div class="feature-box">
                     <div class="feature-icon">
                         <i data-feather="book-open"></i>
@@ -101,13 +101,13 @@ if (isset($_SESSION['success_message'])) {
 <!-- Weather Section -->
 <section class="weather-section">
     <div class="container">
-        <div class="section-title">
+        <div class="section-title" data-aos="fade-up">
             <h2 data-en="Current Weather" data-hi="वर्तमान मौसम">
                 <?php echo ($_SESSION['language'] == 'en') ? 'Current Weather' : 'वर्तमान मौसम'; ?>
             </h2>
         </div>
         <div class="row">
-            <div class="col-md-8 mx-auto">
+            <div class="col-md-8 mx-auto" data-aos="zoom-in">
                 <div class="weather-search">
                     <form id="weather-search-form" class="weather-search-form">
                         <input type="text" id="weather-location" class="weather-search-input" placeholder="<?php echo ($_SESSION['language'] == 'en') ? 'Enter your location' : 'अपना स्थान दर्ज करें'; ?>" value="Delhi">
@@ -149,13 +149,13 @@ if (isset($_SESSION['success_message'])) {
 <!-- Market Section -->
 <section class="market-section">
     <div class="container">
-        <div class="section-title">
+        <div class="section-title" data-aos="fade-up">
             <h2 data-en="Market Prices" data-hi="बाजार मूल्य">
                 <?php echo ($_SESSION['language'] == 'en') ? 'Market Prices' : 'बाजार मूल्य'; ?>
             </h2>
         </div>
         <div class="row">
-            <div class="col-md-10 mx-auto">
+            <div class="col-md-10 mx-auto" data-aos="fade-up">
                 <div class="table-responsive">
                     <table class="market-table">
                         <thead>
@@ -202,7 +202,7 @@ if (isset($_SESSION['success_message'])) {
 <!-- Farmer Stories Section -->
 <section class="stories-section">
     <div class="container">
-        <div class="section-title">
+        <div class="section-title" data-aos="fade-up">
             <h2 data-en="Farmer Success Stories" data-hi="किसान सफलता की कहानियां">
                 <?php echo ($_SESSION['language'] == 'en') ? 'Farmer Success Stories' : 'किसान सफलता की कहानियां'; ?>
             </h2>
@@ -212,8 +212,9 @@ if (isset($_SESSION['success_message'])) {
             // Get farmer stories
             $stories = getFarmerStories(3);
             
+            $delay = 2;
             foreach ($stories as $story) {
-                echo '<div class="col-md-4">';
+                echo '<div class="col-md-4" data-aos="fade-up" data-aos-delay="' . $delay . '">';
                 echo '<div class="story-card">';
                 echo '<div class="story-header">';
                 echo '<div class="story-avatar">';
@@ -228,6 +229,7 @@ if (isset($_SESSION['success_message'])) {
                 echo '<div class="story-quote">' . $story['quote'] . '</div>';
                 echo '</div>';
                 echo '</div>';
+                $delay += 100;
             }
             ?>
         </div>
@@ -240,7 +242,7 @@ if (isset($_SESSION['success_message'])) {
 </section>
 
 <!-- Community Call-to-Action -->
-<section class="py-5 bg-success text-white">
+<section class="py-5 bg-success text-white" data-aos="fade-in">
     <div class="container">
         <div class="row align-items-center">
             <div class="col-md-8">
@@ -274,9 +276,10 @@ if (isset($_SESSION['success_message'])) {
             $resources = getEducationalResources('crop_management');
             
             // Display first 3 resources
+            $delay = 0;
             for ($i = 0; $i < min(3, count($resources)); $i++) {
                 $resource = $resources[$i];
-                echo '<div class="col-md-4">';
+                echo '<div class="col-md-4" data-aos="fade-up" data-aos-delay="' . $delay . '">';
                 echo '<div class="resource-card">';
                 echo '<div class="resource-image">';
                 echo '<img src="/assets/' . $resource['image'] . '" alt="' . $resource['title'] . '" class="img-fluid">';
@@ -290,6 +293,7 @@ if (isset($_SESSION['success_message'])) {
                 echo '</div>';
                 echo '</div>';
                 echo '</div>';
+                $delay += 100;
             }
             ?>
         </div>

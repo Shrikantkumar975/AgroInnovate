@@ -296,7 +296,7 @@ if (isset($_SESSION['message'])) {
     <?php include 'includes/header.php'; ?>
     
     <div class="container">
-        <div class="auth-container">
+        <div class="auth-container" data-aos="zoom-in">
             <!-- Auth Tabs -->
             <ul class="nav nav-tabs auth-tabs" id="authTabs" role="tablist">
                 <li class="nav-item" role="presentation">

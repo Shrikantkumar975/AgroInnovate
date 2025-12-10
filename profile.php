@@ -124,7 +124,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_profile'])) {
 <?php include 'includes/header.php'; ?>
 
 <main>
-    <div class="container profile-container">
+    <div class="container profile-container" data-aos="fade-up">
         <div class="profile-header">
             <div class="profile-header-avatar">
                 <?php echo strtoupper(substr($userData['name'], 0, 1)); ?>

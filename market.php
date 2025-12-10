@@ -18,8 +18,8 @@ include_once 'includes/header.php';
 
 <!-- Page Header -->
 <section class="py-5 bg-success text-white">
-    <div class="container">
-        <h1 data-en="Market Prices" data-hi="बाजार मूल्य">
+    <div class="container" data-aos="fade-up">
+        <h1 data-lang-en="Agricultural Market Prices" data-lang-hi="कृषि बाजार मूल्य">
             <?php echo ($_SESSION['language'] == 'en') ? 'Market Prices' : 'बाजार मूल्य'; ?>
         </h1>
         <p class="lead" data-en="Stay updated with current crop prices and market trends" data-hi="वर्तमान फसल मूल्यों और बाजार रुझानों के साथ अपडेट रहें">

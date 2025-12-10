@@ -129,5 +129,14 @@ $t = $footer_content[$lang];
         // Initialize Feather icons
         feather.replace();
     </script>
+    <!-- AOS Animation JS -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({
+            duration: 800,
+            once: true,
+            offset: 100
+        });
+    </script>
 </body>
 </html>
