@@ -3,11 +3,12 @@
 $db_host = getenv('DB_HOST') !== false ? getenv('DB_HOST') : 'localhost';
 $db_name = getenv('DB_NAME') !== false ? getenv('DB_NAME') : 'agroinnovate';
 $db_user = getenv('DB_USER') !== false ? getenv('DB_USER') : 'root';
-$db_pass = getenv('DB_PASS') !== false ? getenv('DB_PASS') : '';
+$db_port = getenv('DB_PORT') !== false ? getenv('DB_PORT') : '3306';
 
 try {
     // First try to connect without database to check if it exists
-    $temp_pdo = new PDO("mysql:host=$db_host", $db_user, $db_pass);
+    $temp_dsn = "mysql:host=$db_host;port=$db_port";
+    $temp_pdo = new PDO($temp_dsn, $db_user, $db_pass);
     $temp_pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     
     // Check if database exists
@@ -19,7 +20,8 @@ try {
     }
     
     // Now connect to the database
-    $pdo = new PDO("mysql:host=$db_host;dbname=$db_name;charset=utf8mb4", $db_user, $db_pass);
+    $dsn = "mysql:host=$db_host;port=$db_port;dbname=$db_name;charset=utf8mb4";
+    $pdo = new PDO($dsn, $db_user, $db_pass);
     
     // Set PDO to throw exceptions on error
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
