@@ -1,9 +1,19 @@
 <?php
 // Database configuration
-$db_host = getenv('DB_HOST') !== false ? getenv('DB_HOST') : 'localhost';
-$db_name = getenv('DB_NAME') !== false ? getenv('DB_NAME') : 'agroinnovate';
-$db_user = getenv('DB_USER') !== false ? getenv('DB_USER') : 'root';
-$db_port = getenv('DB_PORT') !== false ? getenv('DB_PORT') : '3306';
+// Helper to get env var with fallback
+function get_env_var($key, $default = null) {
+    if (getenv($key) !== false && getenv($key) !== '') return getenv($key);
+    if (isset($_ENV[$key]) && $_ENV[$key] !== '') return $_ENV[$key];
+    if (isset($_SERVER[$key]) && $_SERVER[$key] !== '') return $_SERVER[$key];
+    return $default;
+}
+
+// Database configuration with better detection
+$db_host = get_env_var('DB_HOST', 'localhost');
+$db_name = get_env_var('DB_NAME', 'agroinnovate');
+$db_user = get_env_var('DB_USER', 'root');
+$db_pass = get_env_var('DB_PASS', '');
+$db_port = get_env_var('DB_PORT', '3306');
 
 try {
     // First try to connect without database to check if it exists
@@ -56,13 +66,11 @@ try {
 } catch (PDOException $e) {
     // Log detailed error
     error_log("Database Error: " . $e->getMessage());
-    error_log("Error Code: " . $e->getCode());
-    error_log("Error File: " . $e->getFile());
-    error_log("Error Line: " . $e->getLine());
-    error_log("Error Trace: " . $e->getTraceAsString());
+    error_log("Connection Params - Host: $db_host, Port: $db_port, User: $db_user, DB: $db_name"); 
     
     // In production, show a user-friendly message
-    die("Sorry, there was a problem connecting to the database. Please try again later. Error: " . $e->getMessage());
+    $debug_msg = "Error: " . $e->getMessage() . " (Host: $db_host)";
+    die("Sorry, there was a problem connecting to the database. Please try again later. " . $debug_msg);
 }
 
 // Make the connection available globally
